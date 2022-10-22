@@ -1,7 +1,7 @@
 [tool.poetry]
-name = "okra"
+name = "nlp"
 version = "0.1.0"
-description = "OKRA"
+description = "NLP"
 authors = ["Miroslav Mlynarik <miroslav.mlynarik@gmail.com>"]
 
 [tool.poetry.dependencies]
