@@ -1,23 +1,23 @@
 .PHONY: django, dramatiq, dramatiqr, test migrate, makemigrations, static, db, loadprod, loadtest, flush, superuser, venv, venvd, ssh, git, poetry, repo
 
 ssh:
-	ssh-keygen -t rsa -b 4096 -C "mmlynarik@sk.uss.com" -N '' -f ~/.ssh/id_rsa
+	ssh-keygen -t rsa -b 4096 -C "miroslav.mlynarik@gmail.com" -N '' -f ~/.ssh/id_rsa
 	cat ~/.ssh/id_rsa.pub
 
 git:
 	git config --global user.name "Miroslav Mlynarik"
-	git config --global user.email "mmlynarik@sk.uss.com"
+	git config --global user.email "miroslav.mlynarik@gmail.com"
 	git config --global remote.origin.prune true
 
 poetry:
-	curl -sSL https://install.python-poetry.org | python3.8 -
+	curl -sSL https://install.python-poetry.org | python3.9 -
 
 repo:
 	mkdir python
 	cd python; \
-	git clone ssh://vdevops.sk.uss.com:22/Esten/UssAi/_git/UssAi
+
 	mv Makefile setup.cfg pyproject.toml poetry.lock python/UssAi/
-	cd python/UssAi; \
+	cd python/okra; \
 	code .
 
 venv:
