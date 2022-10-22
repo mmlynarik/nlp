@@ -1,0 +1,6 @@
+.venv/
+.venvd/
+.env
+.vscode
+data/
+mallet/
