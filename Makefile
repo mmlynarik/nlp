@@ -74,11 +74,11 @@ superuser:
 	python manage.py createsuperuser
 
 migrate:
-	cd frontend/; \
+	cd src/nlp/; \
 	python manage.py migrate
 
 makemigrations:
-	cd frontend/; \
+	cd src/nlp; \
 	python manage.py makemigrations
 
 static:
