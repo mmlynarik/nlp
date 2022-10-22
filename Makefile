@@ -54,7 +54,7 @@ app:
 	python manage.py createsuperuser
 
 django:
-	cd frontend/; \
+	cd src/nlp/; \
 	python manage.py runserver
 
 dramatiqr:
@@ -70,7 +70,7 @@ test:
 	python -m unittest discover -s tests -t .
 
 superuser:
-	cd  frontend/; \
+	cd src/nlp/; \
 	python manage.py createsuperuser
 
 migrate:
