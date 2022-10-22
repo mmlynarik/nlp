@@ -8,5 +8,4 @@ a = 2
 
 df = pd.DataFrame(reviews)
 
-
 print(df)
