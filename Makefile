@@ -44,6 +44,10 @@ posh:
 	sudo chmod +x /usr/local/bin/oh-my-posh
 	echo eval "$$(sudo oh-my-posh --init --shell bash --config ~/.poshthemes/paradox.omp.json)" >> ~/.bashrc
 
+shell:
+	cd src/frontend; \
+	python manage.py shell
+
 venvd:
 	rm -rf .venv
 
