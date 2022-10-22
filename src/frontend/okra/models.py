@@ -18,6 +18,7 @@ class OKRAReviews(models.Model):
 
     @classmethod
     def from_json(cls, path: str) -> "OKRAReviews":
+        OKRAReviews.objects.all().delete()
         with open(PWD / path, "r") as f:
             reviews = json.load(f)
         for r in reviews:
