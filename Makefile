@@ -28,6 +28,9 @@ venv:
 	pip install -U pip setuptools wheel; \
 	poetry install
 
+commit:
+	pre-commit run --all-files
+
 posh:
 	mkdir ~/.poshthemes/
 	wget https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest/download/posh-linux-amd64
