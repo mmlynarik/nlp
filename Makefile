@@ -48,41 +48,41 @@ venvd:
 	rm -rf .venv
 
 app:
-	cd frontend/; \
+	cd src/frontend/; \
 	python manage.py collectstatic; \
 	python manage.py migrate; \
 	python manage.py createsuperuser
 
 django:
-	cd src/nlp/; \
+	cd src/frontend/; \
 	python manage.py runserver
 
 dramatiqr:
-	cd frontend/; \
+	cd src/frontend/; \
 	sudo service redis-server start; \
 	python manage.py rundramatiq
 
 dramatiq:
-	cd frontend/; \
+	cd src/frontend/; \
 	python manage.py rundramatiq
 
 test:
 	python -m unittest discover -s tests -t .
 
 superuser:
-	cd src/nlp/; \
+	cd src/frontend/; \
 	python manage.py createsuperuser
 
 migrate:
-	cd src/nlp/; \
+	cd src/frontend/; \
 	python manage.py migrate
 
 makemigrations:
-	cd src/nlp; \
+	cd src/frontend; \
 	python manage.py makemigrations
 
 static:
-	cd frontend/; \
+	cd src/frontend/; \
 	python manage.py collectstatic
 
 loadprod:
