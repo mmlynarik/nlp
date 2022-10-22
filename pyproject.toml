@@ -22,6 +22,7 @@ transformers = "^4.19.2"
 torch = "^1.11.0"
 plotly = "^5.8.0"
 datasets = "^2.2.2"
+nltk = "^3.7"
 
 [tool.poetry.group.dev.dependencies]
 pycodestyle = "^2.9.1"
