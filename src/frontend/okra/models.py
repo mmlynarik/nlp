@@ -1,11 +1,6 @@
 import json
-import os
-from pathlib import Path
+
 from django.db import models
-
-# Create your models here.
-
-PWD = Path(os.getcwd()).parent.parent
 
 
 class OKRAReviews(models.Model):
@@ -19,14 +14,14 @@ class OKRAReviews(models.Model):
     @classmethod
     def from_json(cls, path: str) -> "OKRAReviews":
         OKRAReviews.objects.all().delete()
-        with open(PWD / path, "r") as f:
+        with open(path, "r") as f:
             reviews = json.load(f)
-        for r in reviews:
+        for review in reviews:
             OKRAReviews.objects.create(
-                date=r["date"][:19],
-                title=r["title"],
-                text=r["text"],
-                url=r["url"],
-                stars=r["stars"],
-                raw=r,
+                date=review["date"][:19],
+                title=review["title"],
+                text=review["text"],
+                url=review["url"],
+                stars=review["stars"],
+                raw=review,
             )
