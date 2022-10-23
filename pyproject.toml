@@ -6,10 +6,7 @@ license = "Proprietary"
 authors = ["Miroslav Mlynarik <miroslav.mlynarik@gmail.com>"]
 readme = "README.md"
 repository = "https://github.com/mmlynarik/nlp"
-keywords = "nlp"
-
-[tool.poetry.scripts]
-load_okra_data = 'src.ora.load_okra_data:main'
+keywords = ["nlp"]
 
 [tool.poetry.dependencies]
 python = "3.9.5"
@@ -32,6 +29,7 @@ datasets = "^2.2.2"
 nltk = "^3.7"
 django = "^4.1.2"
 psycopg2 = "2.9"
+src = {path = "src", develop = true}
 
 [tool.poetry.group.dev.dependencies]
 pycodestyle = "^2.9.1"

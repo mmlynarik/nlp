@@ -1667,6 +1667,19 @@ optional = false
 python-versions = ">=3.5"
 
 [[package]]
+name = "src"
+version = "0.0.1"
+description = "My NLP home projects"
+category = "main"
+optional = false
+python-versions = "*"
+develop = true
+
+[package.source]
+type = "directory"
+url = "src"
+
+[[package]]
 name = "tenacity"
 version = "8.1.0"
 description = "Retry code until it succeeds"
@@ -1975,7 +1988,7 @@ testing = ["flake8 (<5)", "func-timeout", "jaraco.functools", "jaraco.itertools"
 [metadata]
 lock-version = "1.1"
 python-versions = "3.9.5"
-content-hash = "c5d5217d2aa7128c9278838d7c3f5e4d4e6b10e14b492e039e63b7d651e6e0c9"
+content-hash = "f08408fae94c3a34bfc6ba0c5e96ae82f1bdf5a40a02d28b00508d3fc2221c2f"
 
 [metadata.files]
 aiohttp = [
@@ -3522,6 +3535,7 @@ sqlparse = [
     {file = "sqlparse-0.4.3-py3-none-any.whl", hash = "sha256:0323c0ec29cd52bceabc1b4d9d579e311f3e4961b98d174201d5622a23b85e34"},
     {file = "sqlparse-0.4.3.tar.gz", hash = "sha256:69ca804846bb114d2ec380e4360a8a340db83f0ccf3afceeb1404df028f57268"},
 ]
+src = []
 tenacity = [
     {file = "tenacity-8.1.0-py3-none-any.whl", hash = "sha256:35525cd47f82830069f0d6b73f7eb83bc5b73ee2fff0437952cedf98b27653ac"},
     {file = "tenacity-8.1.0.tar.gz", hash = "sha256:e48c437fdf9340f5666b92cd7990e96bc5fc955e1298baf4a907e3972067a445"},

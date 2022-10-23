@@ -5,3 +5,4 @@
 mallet/
 .ipynb_checkpoints
 __pycache__/
+*.egg-info
