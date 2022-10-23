@@ -9,7 +9,7 @@ from pathlib import Path
 from setuptools import setup
 
 ROOT_DIR = Path(__file__).resolve().parent.parent
-print(f"{ROOT_DIR=}")
+
 with open(ROOT_DIR / "README.md", encoding="utf-8") as f:
     long_description = f.read()
 
@@ -19,7 +19,7 @@ setup(
     version="0.0.1",
     package_data={},
     packages=[
-        "okra",
+        "datamodel",
         "djangoproject",
         "vacuumlabs",
     ],
@@ -30,7 +30,7 @@ setup(
     zip_safe=False,
     entry_points={
         "console_scripts": [
-            "load_okra_data=okra.load_okra_data:main",
+            "load_okra_data=datamodel.load_okra_data:main",
         ]
     },
 )

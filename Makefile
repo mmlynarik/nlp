@@ -51,6 +51,9 @@ shell:
 venvd:
 	rm -rf .venv
 
+loadokra:
+	/home/miro/python/nlp/.venv/bin/python /home/miro/python/nlp/src/okra/load_okra_data.py
+
 app:
 	cd src/frontend/; \
 	python manage.py collectstatic; \
