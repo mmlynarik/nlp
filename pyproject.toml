@@ -34,3 +34,11 @@ pre-commit = "^2.20.0"
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 110
+
+[mypy]
+ignore_missing_imports = true
+check_untyped_defs = true
+strict_equality = false
