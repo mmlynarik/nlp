@@ -1,8 +1,15 @@
 [tool.poetry]
-name = "nlp"
+name = "NLP"
 version = "0.1.0"
-description = "NLP"
+description = "My NLP home projects"
+license = "Proprietary"
 authors = ["Miroslav Mlynarik <miroslav.mlynarik@gmail.com>"]
+readme = "README.md"
+repository = "https://github.com/mmlynarik/nlp"
+keywords = "nlp"
+
+[tool.poetry.scripts]
+load_okra_data = 'src.ora.load_okra_data:main'
 
 [tool.poetry.dependencies]
 python = "3.9.5"
