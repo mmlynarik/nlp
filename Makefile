@@ -46,7 +46,7 @@ posh:
 	echo eval "$$(sudo oh-my-posh --init --shell bash --config ~/.poshthemes/paradox.omp.json)" >> ~/.bashrc
 
 shell:
-	cd src/frontend; \
+	cd src/djangoproject; \
 	python manage.py shell
 
 venvd:
@@ -56,55 +56,55 @@ loadokra:
 	/home/miro/python/nlp/.venv/bin/python /home/miro/python/nlp/src/okra/load_okra_data.py
 
 app:
-	cd src/frontend/; \
+	cd src/djangoproject/; \
 	python manage.py collectstatic; \
 	python manage.py migrate; \
 	python manage.py createsuperuser
 
 django:
-	cd src/frontend/; \
+	cd src/djangoproject/; \
 	python manage.py runserver
 
 dramatiqr:
-	cd src/frontend/; \
+	cd src/djangoproject/; \
 	sudo service redis-server start; \
 	python manage.py rundramatiq
 
 dramatiq:
-	cd src/frontend/; \
+	cd src/djangoproject/; \
 	python manage.py rundramatiq
 
 test:
 	python -m unittest discover -s tests -t .
 
 superuser:
-	cd src/frontend/; \
+	cd src/djangoproject/; \
 	python manage.py createsuperuser
 
 migrate:
-	cd src/frontend/; \
+	cd src/djangoproject/; \
 	python manage.py migrate
 
 makemigrations:
-	cd src/frontend; \
+	cd src/djangoproject; \
 	python manage.py makemigrations
 
 static:
-	cd src/frontend/; \
+	cd src/djangoproject/; \
 	python manage.py collectstatic
 
 loadprod:
-	cd frontend/; \
+	cd djangoproject/; \
 	python manage.py migrate; \
 	python manage.py flush --no-input; \
 	python manage.py loaddata db_backup_prod.json
 
 loadtest:
-	cd frontend/; \
+	cd djangoproject/; \
 	python manage.py migrate; \
 	python manage.py flush --no-input; \
 	python manage.py loaddata db_backup_test.json
 
 flush:
-	cd frontend/; \
+	cd djangoproject/; \
 	python manage.py flush
