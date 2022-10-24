@@ -26,6 +26,7 @@ venv:
 	echo "set -a && . ./.env && set +a" >> .venv/bin/activate; \
 	. .venv/bin/activate; \
 	pip install -U pip setuptools wheel; \
+	sudo apt install libpq-dev; \
 	poetry install
 
 
