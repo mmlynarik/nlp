@@ -30,7 +30,7 @@ setup(
     zip_safe=False,
     entry_points={
         "console_scripts": [
-            "load_okra_data=datamodel.load_okra_data:main",
+            "load_okra_data=scripts.load_okra_data:main",
         ]
     },
 )
