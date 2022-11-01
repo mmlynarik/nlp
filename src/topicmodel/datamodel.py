@@ -1,1 +1,1 @@
-from topicmodel.datamodel import *
+from topicmodel.config import *
