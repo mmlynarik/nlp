@@ -34,9 +34,14 @@ venv:
 
 db:
 	docker run -d --name postgres -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -p 5432:5432 -v ${HOME}/data:/var/lib/postgresql/data postgres:15
+	sleep 2
+	cd src/djangoproject/; \
+	python manage.py migrate
+
 
 dbd:
 	sudo rm -rf ~/data
+	docker rm -f postgres
 
 commit:
 	pre-commit run --all-files
