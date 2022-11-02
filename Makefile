@@ -37,7 +37,7 @@ db:
 	sleep 2
 	cd src/djangoproject/; \
 	python manage.py migrate
-
+	load_okra_data
 
 dbd:
 	sudo rm -rf ~/data
