@@ -19,9 +19,8 @@ setup(
     version="0.0.1",
     package_data={},
     packages=[
-        "datamodel",
+        "topicmodel",
         "djangoproject",
-        "vacuumlabs",
     ],
     description="My NLP home projects",
     long_description=long_description,
