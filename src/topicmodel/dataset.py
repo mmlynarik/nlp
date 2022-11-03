@@ -3,7 +3,7 @@ import math
 import keras
 import numpy as np
 import tensorflow as tf
-from keras import layers, models
+from keras import layers
 from keras.layers.preprocessing import text_vectorization as text
 
 tf.random.set_seed(1)
@@ -26,20 +26,21 @@ data_out = np.arange(12).reshape(BATCH_SIZE, MAX_SEQ_LEN, LSTM_HIDDEN_DIM)
 class LSTMOkraModel(keras.Model):
     def __init__(self):
         super().__init__()
-        self.embed = layers.Embedding(VOCAB_SIZE, EMBEDDING_DIM, mask_zero=True)
-        self.dense = layers.Dense(DENSE_DIM)
-        self.hidden = layers.LSTM(LSTM_HIDDEN_DIM, return_sequences=True)
+        self.input_layer = layers.Input(shape=(MAX_SEQ_LEN,), batch_size=BATCH_SIZE, name="token_ids")
+        self.embed = layers.Embedding(VOCAB_SIZE, EMBEDDING_DIM, mask_zero=True, name="embed")
+        self.dense = layers.Dense(DENSE_DIM, name="dense")
+        self.lstm = layers.LSTM(LSTM_HIDDEN_DIM, return_sequences=True, name="lstm")
+        self.out = self.call(self.input_layer)
 
     def call(self, inputs):
         x = self.embed(inputs)
         x = self.dense(x)
-        x = self.hidden(x)
+        x = self.lstm(x)
         return x
 
-    def summary(self):
-        x = layers.Input(shape=(MAX_SEQ_LEN,), batch_size=BATCH_SIZE, name="token_ids")
-        model = keras.Model(inputs=[x], outputs=self.call(x))
-        return model.summary()
+    @property
+    def output_shape(self):
+        return self.layers[-1].output_shape
 
 
 model = LSTMOkraModel()
@@ -49,6 +50,6 @@ loss = model.evaluate(token_ids, data_out, verbose=0)
 
 print("Predictions:\n", preds)
 print("Loss:", loss)
-print("Loss (recalc):", np.sum(np.square(preds[0, :2] - data_out[0, :2])) / LSTM_HIDDEN_DIM / MAX_SEQ_LEN)
+print("Loss (recalc):", np.sum(np.square(preds[0, :2] - data_out[0, :2])) / math.prod(model.output_shape))
 
 model.summary()
