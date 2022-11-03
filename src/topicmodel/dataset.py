@@ -7,11 +7,11 @@ from keras.layers.preprocessing.text_vectorization import TextVectorization
 
 tf.random.set_seed(1)
 
-MAX_SEQ_LEN = 4
 BATCH_SIZE = 1
-HIDDEN_DIM = 3
-EMBEDDING_DIM = 5
+MAX_SEQ_LEN = 4
 VOCAB_SIZE = 8
+EMBEDDING_DIM = 5
+HIDDEN_DIM = 3
 
 token_ids = np.array([[1, 2, 0, 0]])
 data_out = np.arange(12).reshape(BATCH_SIZE, MAX_SEQ_LEN, HIDDEN_DIM)
