@@ -37,7 +37,7 @@ class LSTMOkraModel(keras.Model):
         self.embedding = layers.Embedding(vocab_size, embedding_dim, mask_zero=True, name="embed")
         self.dense = layers.Dense(dense_dim, name="dense")
         self.lstm = layers.LSTM(lstm_hidden_dim, return_sequences=True, name="lstm")
-        self.call(layers.Input(shape=(max_seq_len,), batch_size=batch_size))
+        self.call(layers.Input(shape=(max_seq_len, )))
 
     def call(self, inputs):
         x = self.embedding(inputs)
@@ -47,7 +47,7 @@ class LSTMOkraModel(keras.Model):
 
     @property
     def output_shape(self):
-        return self.layers[-1].output_shape
+        return self.layers[-1].output_shape[1:]
 
 
 model = LSTMOkraModel(
