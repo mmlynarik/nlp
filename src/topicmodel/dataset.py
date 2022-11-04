@@ -38,8 +38,8 @@ class LSTMOkraModel(keras.Model):
         self.lstm = layers.LSTM(lstm_hidden_dim, return_sequences=True, name="lstm")
         self.call(layers.Input(shape=(max_seq_len,)))
 
-    def call(self, inputs):
-        x = self.embedding(inputs)
+    def call(self, input_tensor):
+        x = self.embedding(input_tensor)
         x = self.dense(x)
         x = self.lstm(x)
         return x
