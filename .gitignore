@@ -1,7 +1,6 @@
 .venv/
-.venvd/
 .env
-.vscode
+.vscode/
 mallet/
 .ipynb_checkpoints
 __pycache__/
