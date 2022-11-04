@@ -26,7 +26,6 @@ data_out = np.arange(12).reshape(BATCH_SIZE, MAX_SEQ_LEN, LSTM_HIDDEN_DIM)
 class LSTMOkraModel(keras.Model):
     def __init__(
         self,
-        batch_size: int,
         max_seq_len: int,
         embedding_dim: int,
         vocab_size: int,
