@@ -36,6 +36,10 @@ class OKRADataLoader(tf.data.Dataset):
         return batched_dataset
 
 
+class OKRADataModule():
+    pass
+
+
 class LSTMOkraModel(keras.Model):
     def __init__(
         self,
