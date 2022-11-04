@@ -1,4 +1,5 @@
 import math
+from typing import List, Tuple
 
 import keras
 import numpy as np
@@ -21,6 +22,18 @@ token_ids = np.array([[1, 2, 0, 0]])
 data_out = np.arange(12).reshape(BATCH_SIZE, MAX_SEQ_LEN, LSTM_HIDDEN_DIM)
 
 # Flatten layer does not propagate nor consume mask produced by Embedding layer.
+
+
+class OKRADataset(tf.data.Dataset):
+    def __new__(cls, data: List[Tuple[tf.Tensor, tf.Tensor]]):
+        return tf.data.Dataset.from_tensor_slices(data)
+
+
+class OKRADataLoader(tf.data.Dataset):
+    def __new__(cls, dataset: tf.data.Dataset, batch_size: int):
+        batched_dataset = dataset.batch(batch_size)
+        # TODO: Add .map() transformations here e.g. to tokenize the input strings
+        return batched_dataset
 
 
 class LSTMOkraModel(keras.Model):
