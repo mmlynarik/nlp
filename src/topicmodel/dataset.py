@@ -14,12 +14,12 @@ MAX_SEQ_LEN = 4
 VOCAB_SIZE = 8
 EMBEDDING_DIM = 5
 DENSE_DIM = 2
-LSTM_HIDDEN_DIM = 3
+HIDDEN_DIM = 3
 
 TV = text.TextVectorization()
 
 token_ids = np.array([[1, 2, 0, 0]])
-data_out = np.arange(12).reshape(BATCH_SIZE, MAX_SEQ_LEN, LSTM_HIDDEN_DIM)
+data_out = np.arange(24).reshape(BATCH_SIZE, MAX_SEQ_LEN, 2 * HIDDEN_DIM)
 
 # Flatten layer does not propagate nor consume mask produced by Embedding layer.
 
@@ -27,10 +27,6 @@ data_out = np.arange(12).reshape(BATCH_SIZE, MAX_SEQ_LEN, LSTM_HIDDEN_DIM)
 class OKRADataset(tf.data.Dataset):
     def __new__(cls, data: List[Tuple[tf.Tensor, tf.Tensor]]):
         return tf.data.Dataset.from_tensor_slices(data)
-
-
-class OKRATokenizer:
-    pass
 
 
 class OKRADataLoader(tf.data.Dataset):
@@ -75,14 +71,14 @@ class LSTMOkraModel(keras.Model):
     ):
         super().__init__()
         self.embedding = layers.Embedding(vocab_size, embedding_dim, mask_zero=True)
-        self.dense = layers.Dense(dense_dim)
-        self.lstm = layers.LSTM(hidden_dim, return_sequences=True)
+        self.lstm = layers.Bidirectional(layers.LSTM(hidden_dim), merge_mode="sum")
+        self.dense = layers.Dense(2 * hidden_dim)
         self.call(layers.Input(shape=(max_seq_len,)))
 
     def call(self, input_tensor):
         x = self.embedding(input_tensor)
-        x = self.dense(x)
         x = self.lstm(x)
+        x = self.dense(x)
         return x
 
     @property
@@ -95,7 +91,7 @@ model = LSTMOkraModel(
     embedding_dim=EMBEDDING_DIM,
     vocab_size=VOCAB_SIZE,
     dense_dim=DENSE_DIM,
-    hidden_dim=LSTM_HIDDEN_DIM,
+    hidden_dim=HIDDEN_DIM,
 )
 model.compile(loss="mse", optimizer="adam")
 preds = model.predict(token_ids)
@@ -103,7 +99,7 @@ loss = model.evaluate(token_ids, data_out, verbose=0)
 
 print("Predictions:\n", preds)
 print("Loss:", loss)
-print("Loss (recalc):", np.sum(np.square(preds[0, :2] - data_out[0, :2])) / math.prod(model.output_shape))
+# print("Loss (recalc):", np.sum(np.square(preds[0, :2] - data_out[0, :2])) / math.prod(model.output_shape))
 
 model.summary()
 
