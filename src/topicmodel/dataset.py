@@ -42,11 +42,18 @@ class OKRADataModule:
 
 
 class WordTokenizer(text.TextVectorization):
-    def __init__(self, vocab_size: int, max_seq_len: int, standardize: str = "lower_and_strip_punctuation",
+    def __init__(
+        self,
+        vocab_size: int,
+        max_seq_len: int,
+        standardize: str = "lower_and_strip_punctuation",
         split: str = "whitespace",
     ):
         super().__init__(
-            max_tokens=vocab_size, output_sequence_length=max_seq_len, standardize=standardize, split=split,
+            max_tokens=vocab_size,
+            output_sequence_length=max_seq_len,
+            standardize=standardize,
+            split=split,
         )
 
     def encode(self, text: str) -> np.ndarray:
@@ -56,7 +63,12 @@ class WordTokenizer(text.TextVectorization):
 
 class LSTMOkraModel(keras.Model):
     def __init__(
-        self, max_seq_len: int, embedding_dim: int, vocab_size: int, dense_dim: int, hidden_dim: int,
+        self,
+        max_seq_len: int,
+        embedding_dim: int,
+        vocab_size: int,
+        dense_dim: int,
+        hidden_dim: int,
     ):
         super().__init__()
         self.embedding = layers.Embedding(vocab_size, embedding_dim, mask_zero=True)
