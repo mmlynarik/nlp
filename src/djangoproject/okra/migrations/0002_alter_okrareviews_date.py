@@ -10,9 +10,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AlterField(
-            model_name="okrareviews",
-            name="date",
-            field=models.DateTimeField(),
-        ),
+        migrations.AlterField(model_name="okrareviews", name="date", field=models.DateTimeField(),),
     ]
