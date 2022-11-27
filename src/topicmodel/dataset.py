@@ -5,6 +5,7 @@ import keras
 import numpy as np
 import tensorflow as tf
 from keras import layers
+from keras.preprocessing.sequence import skipgrams
 from keras.layers.preprocessing import text_vectorization as text
 
 tf.random.set_seed(1)
@@ -40,19 +41,12 @@ class OKRADataModule:
     pass
 
 
-class OKRATokenizer(text.TextVectorization):
-    def __init__(
-        self,
-        max_tokens: int,
-        output_sequence_length: int,
-        standardize: str = "lower_and_strip_punctuation",
+class WordTokenizer(text.TextVectorization):
+    def __init__(self, vocab_size: int, max_seq_len: int, standardize: str = "lower_and_strip_punctuation",
         split: str = "whitespace",
     ):
         super().__init__(
-            max_tokens=max_tokens,
-            output_sequence_length=output_sequence_length,
-            standardize=standardize,
-            split=split,
+            max_tokens=vocab_size, output_sequence_length=max_seq_len, standardize=standardize, split=split,
         )
 
     def encode(self, text: str) -> np.ndarray:
@@ -62,12 +56,7 @@ class OKRATokenizer(text.TextVectorization):
 
 class LSTMOkraModel(keras.Model):
     def __init__(
-        self,
-        max_seq_len: int,
-        embedding_dim: int,
-        vocab_size: int,
-        dense_dim: int,
-        hidden_dim: int,
+        self, max_seq_len: int, embedding_dim: int, vocab_size: int, dense_dim: int, hidden_dim: int,
     ):
         super().__init__()
         self.embedding = layers.Embedding(vocab_size, embedding_dim, mask_zero=True)
@@ -103,7 +92,7 @@ print("Loss:", loss)
 
 model.summary()
 
-tokenizer = OKRATokenizer(max_tokens=10000, output_sequence_length=10)
+tokenizer = WordTokenizer(max_tokens=10000, output_sequence_length=10)
 corpus = ["Hello!", "I have a dream", "Nice job."]
 tokenizer.adapt(corpus)
 print(tokenizer.encode(corpus[1]))
