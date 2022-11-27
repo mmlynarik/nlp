@@ -18,18 +18,11 @@ setup(
     name="src",
     version="0.0.1",
     package_data={},
-    packages=[
-        "topicmodel",
-        "djangoproject",
-    ],
+    packages=["topicmodel", "djangoproject",],
     description="My NLP home projects",
     long_description=long_description,
     long_description_content_type="text/markdown",
     install_requires=[],
     zip_safe=False,
-    entry_points={
-        "console_scripts": [
-            "load_okra_data=topicmodel.load_okra_data_json_to_db:main",
-        ]
-    },
+    entry_points={"console_scripts": ["load_okra_data=topicmodel.load_okra_data_json_to_db:main",]},
 )
