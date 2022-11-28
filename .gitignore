@@ -6,3 +6,4 @@ mallet/
 __pycache__/
 *.egg-info
 src/djangoproject/static/
+**/data/
