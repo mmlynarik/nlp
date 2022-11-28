@@ -8,6 +8,9 @@ from keras import layers
 from keras.preprocessing.sequence import skipgrams
 from keras.layers.preprocessing import text_vectorization as text
 
+from topicmodel.utils import text_to_sentences
+
+
 tf.random.set_seed(1)
 
 BATCH_SIZE = 1
@@ -37,11 +40,9 @@ class OKRADataLoader(tf.data.Dataset):
         return batched_dataset
 
 
-class OKRADataModule:
-    pass
-
-
 class WordTokenizer(text.TextVectorization):
+    """Word-level tokenizer splitting strings on whitespace after lowercasing and stripping punctuation."""
+
     def __init__(
         self,
         vocab_size: int,
@@ -56,9 +57,9 @@ class WordTokenizer(text.TextVectorization):
             split=split,
         )
 
-    def encode(self, text: str) -> np.ndarray:
-        """Get encoded string represented as sequence of integers based on learned vocabulary."""
-        return self.call(text).numpy()
+    def encode(self, inputs: str) -> tf.Tensor:
+        """Get encoded input strings, each represented as a sequence of integers using learned vocabulary."""
+        return self.call(inputs)
 
 
 class LSTMOkraModel(keras.Model):
@@ -104,7 +105,8 @@ print("Loss:", loss)
 
 model.summary()
 
-tokenizer = WordTokenizer(max_tokens=10000, output_sequence_length=10)
-corpus = ["Hello!", "I have a dream", "Nice job."]
+tokenizer = WordTokenizer(vocab_size=10000, max_seq_len=10)
+corpus = ["Hello!", "I have a dream. What about you? Are you okay, Mr. Bean?", "Nice job."]
+print(text_to_sentences(corpus[1]))
 tokenizer.adapt(corpus)
 print(tokenizer.encode(corpus[1]))
