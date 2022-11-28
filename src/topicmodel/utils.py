@@ -19,6 +19,8 @@ def text_to_sentences(text: str) -> list[str]:
     text = re.sub(digits + "[.]" + digits, "\\1<prd>\\2", text)
     if "..." in text:
         text = text.replace("...", "<prd><prd><prd>")
+    if ".." in text:
+        text = text.replace("..", "<prd><prd>")
     if "Ph.D" in text:
         text = text.replace("Ph.D.", "Ph<prd>D<prd>")
     text = re.sub("\s" + alphabets + "[.] ", " \\1<prd> ", text)

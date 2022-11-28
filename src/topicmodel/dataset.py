@@ -1,5 +1,4 @@
 import math
-from typing import List, Tuple
 
 import keras
 import numpy as np
@@ -9,6 +8,11 @@ from keras.preprocessing.sequence import skipgrams
 from keras.layers.preprocessing import text_vectorization as text
 
 from topicmodel.utils import text_to_sentences
+
+
+class OKRAWord2VecDataset(tf.data.Dataset):
+    def __new__(cls, data: list[tf.Tensor]):
+        return tf.data.Dataset.from_tensor_slices(data)
 
 
 tf.random.set_seed(1)
@@ -29,7 +33,7 @@ data_out = np.arange(24).reshape(BATCH_SIZE, MAX_SEQ_LEN, 2 * HIDDEN_DIM)
 
 
 class OKRADataset(tf.data.Dataset):
-    def __new__(cls, data: List[Tuple[tf.Tensor, tf.Tensor]]):
+    def __new__(cls, data: list[tuple[tf.Tensor, tf.Tensor]]):
         return tf.data.Dataset.from_tensor_slices(data)
 
 
