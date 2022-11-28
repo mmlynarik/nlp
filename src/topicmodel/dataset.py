@@ -51,10 +51,7 @@ class WordTokenizer(text.TextVectorization):
         split: str = "whitespace",
     ):
         super().__init__(
-            max_tokens=vocab_size,
-            output_sequence_length=max_seq_len,
-            standardize=standardize,
-            split=split,
+            max_tokens=vocab_size, output_sequence_length=max_seq_len, standardize=standardize, split=split,
         )
 
     def encode(self, inputs: str) -> tf.Tensor:
@@ -64,12 +61,7 @@ class WordTokenizer(text.TextVectorization):
 
 class LSTMOkraModel(keras.Model):
     def __init__(
-        self,
-        max_seq_len: int,
-        embedding_dim: int,
-        vocab_size: int,
-        dense_dim: int,
-        hidden_dim: int,
+        self, max_seq_len: int, embedding_dim: int, vocab_size: int, dense_dim: int, hidden_dim: int,
     ):
         super().__init__()
         self.embedding = layers.Embedding(vocab_size, embedding_dim, mask_zero=True)
