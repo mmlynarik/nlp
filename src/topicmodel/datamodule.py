@@ -9,7 +9,7 @@ from topicmodel.config import OKRA_DB
 
 
 def read_okra_data_from_pg(date_from: date, date_to: date) -> pd.DataFrame:
-    with warnings.catch_warnings():  # ignore warning for non-SQLAlchemy connecton, see pandas issue #45660
+    with warnings.catch_warnings():  # ignore pandas issue #45660
         warnings.simplefilter("ignore", UserWarning)
         with psycopg2.connect(**OKRA_DB) as conn:
             df_okra = pd.read_sql(QUERY_OKRA_DATA_PG.format(date_from=date_from, date_to=date_to), conn)
