@@ -6,8 +6,9 @@ from typing import Optional
 
 import pandas as pd
 import tensorflow as tf
-import tqdm
 import psycopg2
+from tqdm.auto import tqdm
+from dateutil.relativedelta import relativedelta
 
 from topicmodel.queries import QUERY_OKRA_DATA_PG
 from topicmodel.config import OKRA_DB
@@ -30,15 +31,15 @@ class OKRADataModule:
         self,
         date_from: date,
         date_to: date,
-        period_val_yrs: int,
-        period_test_yrs: int,
+        period_val: relativedelta,
+        period_test: relativedelta,
+        cache_dir: str,
         batch_size: int = 64,
-        cache_dir: str = "./data",
     ):
         self.date_from = date_from
         self.date_to = date_to
-        self.period_val_yrs = period_val_yrs
-        self.period_test_yrs = period_test_yrs
+        self.period_val = period_val
+        self.period_test = period_test
         self.batch_size = batch_size
         self.cache_dir = cache_dir
         self.train_data = None
@@ -51,32 +52,33 @@ class OKRADataModule:
             self.cache_dir, f"filtered_data_from_{self.date_from:%Y%m%d}_to_{self.date_to:%Y%m%d}.csv",
         )
 
-    def get_filtered_data(self) -> pd.DataFrame:
+    def _get_filtered_data(self) -> pd.DataFrame:
         df_filtered_data = pd.read_csv(self._path_filtered_data)
         return df_filtered_data
 
-    def filter_data(self, df_data: pd.DataFrame) -> pd.DataFrame:
+    def _filter_data(self, df_data: pd.DataFrame) -> pd.DataFrame:
         df_data = df_data.drop_duplicates(subset=["title", "text"])
         df_data = df_data.drop(columns=["stars"])
 
         df_data["date"] = pd.to_datetime(df_data["date"])
         df_data["year"] = df_data.date.dt.year
-        df_data["date"] = df_data.date.dt.date
 
         return df_data
 
-    def _create_input_tensor(self, record: pd.Series) -> tf.Tensor:
-        return tf.constant([record["text"]])
+    def _create_input_tensor(self, record: pd.Series) -> str:
+        return record["text"]
 
-    def _create_output_tensor(self, record: pd.Series) -> tf.Tensor:
-        return tf.constant([1])
+    def _create_output_tensor(self, record: pd.Series) -> int:
+        return 1
 
-    def _extract_tensors(self, df_data: pd.DataFrame, tqdm_desc: str) -> list[tuple[tf.Tensor, tf.Tensor]]:
-        vectors = [
-            (record["id"], self._create_input_tensor(record), self._create_output_tensor(record))
-            for _, record in tqdm(df_data.iterrows(), desc=tqdm_desc, total=len(df_data))
-        ]
-        return vectors
+    def _extract_tensors(self, df_data: pd.DataFrame, desc: str) -> tuple[tf.Tensor, tf.Tensor, tf.Tensor]:
+        ids, inputs, outputs = [], [], []
+        for _, record in tqdm(df_data.iterrows(), desc=desc, total=len(df_data)):
+            ids.append(record["id"])
+            inputs.append(self._create_input_tensor(record))
+            outputs.append(self._create_output_tensor(record))
+
+        return tf.constant(ids), tf.constant(inputs), tf.constant(outputs)
 
     def prepare_data(self) -> None:
         if not os.path.exists(self.cache_dir):
@@ -89,45 +91,35 @@ class OKRADataModule:
 
         df_okra = read_okra_data_from_db(date_from=self.date_from, date_to=self.date_to)
 
-        df_filtered_data = self.filter_data(df_okra)
+        df_filtered_data = self._filter_data(df_okra)
         df_filtered_data.to_csv(self._path_filtered_data, index=False)
 
     def setup(self, stage: Optional[str] = None):
-        df_filtered_data = self.get_filtered_data()
+        df_filtered_data = self._get_filtered_data()
 
-        date_start = datetime.fromtimestamp(min(df_filtered_data["date"]))
-        date_end = datetime.fromtimestamp(max(df_filtered_data["date"]))
-        dt_test_start = date_end - self.period_test_yrs
-        dt_val_start = dt_test_start - self.period_val_yrs
+        date_col = df_filtered_data["date"]
+        date_start, date_end = datetime.fromisoformat(min(date_col)), datetime.fromisoformat(max(date_col))
+        dt_test_start = date_end - self.period_test
+        dt_val_start = dt_test_start - self.period_val
 
         if stage is None or stage == "fit":
-            mask_train = df_filtered_data["date"] < dt_val_start.timestamp()
-            train_tensors = self._extract_tensors(df_filtered_data[mask_train], tqdm_desc="Loading trn data")
+            mask_train = date_col < dt_val_start.isoformat()
+            train_tensors = self._extract_tensors(df_filtered_data[mask_train], desc="Loading trn data")
             log.info(
-                f"Training dataset consists of {len(train_tensors)} reviews "
-                f"between {date_start} to {dt_val_start}."
+                f"Training dataset has {len(train_tensors)} reviews between {date_start} to {dt_val_start}."
             )
             self.train_data = OKRAWord2VecDataset(train_tensors)
 
         if stage is None or stage == "validate":
-            mask_val = (dt_val_start.timestamp() <= df_filtered_data["heat_datetime"]) & (
-                df_filtered_data["heat_datetime"] < dt_test_start.timestamp()
-            )
-            val_tensors = self._extract_tensors(
-                df_filtered_data[mask_val], tqdm_desc="Extracting validation vectors"
-            )
+            mask_val = (dt_val_start.isoformat() <= date_col) & (date_col < dt_test_start.isoformat())
+            val_tensors = self._extract_tensors(df_filtered_data[mask_val], desc="Loading val vectors")
             log.info(
-                f"Validation dataset consists of {len(val_tensors)} heats "
-                f"between {dt_val_start} to {dt_test_start} (heats with rare scrap were excluded)."
+                f"Validation dataset has {len(val_tensors)} reviews between {dt_val_start} {dt_test_start}"
             )
             self.val_data = OKRAWord2VecDataset(val_tensors)
 
         if stage is None or stage == "test":
-            mask_test = (dt_test_start.timestamp() <= df_filtered_data["heat_datetime"]) & ~df_filtered_data[
-                "has_rare_scrap"
-            ]
-            test_tensors = self._extract_tensors(df_filtered_data[mask_test], tqdm_desc="Loading test data")
-            log.info(
-                f"Test dataset consists of {len(test_tensors)} reviews between {dt_test_start} to {date_end}"
-            )
+            mask_test = dt_test_start.isoformat() <= date_col
+            test_tensors = self._extract_tensors(df_filtered_data[mask_test], desc="Loading test data")
+            log.info(f"Test dataset has {len(test_tensors)} reviews between {dt_test_start} to {date_end}")
             self.test_data = OKRAWord2VecDataset(test_tensors)
