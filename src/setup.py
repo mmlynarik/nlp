@@ -24,5 +24,10 @@ setup(
     long_description_content_type="text/markdown",
     install_requires=[],
     zip_safe=False,
-    entry_points={"console_scripts": ["load_okra_data=topicmodel.load_okra_data_json_to_db:main",]},
+    entry_points={
+        "console_scripts": [
+            "load_okra_data=topicmodel.load_okra_data_json_to_db:main",
+            "train_okra_model=topicmodel.topic_model_training:main",
+        ]
+    },
 )

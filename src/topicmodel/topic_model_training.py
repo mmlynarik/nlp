@@ -52,15 +52,24 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-datamodule = OKRADataModule(
-    date_from=date(2011, 1, 1),
-    date_to=date(2019, 1, 1),
-    period_val=relativedelta(months=1),
-    period_test=relativedelta(months=1),
-)
+def train_okra_word2vec_model(
+    date_from: date,
+    date_to: date,
+    period_val: relativedelta,
+    period_test: relativedelta,
+    cache_dir: str,
+    log_dir: str,
+    model_dir: str,
+) -> None:
+    """Entrypoint function to train OKRA Word2Vec model."""
+    datamodule = OKRADataModule(
+        date_from=date_from,
+        date_to=date_to,
+        period_val=period_val,
+        period_test=period_test,
+        cache_dir=cache_dir,
+    )
 
-
-def train_okra_word2vec_model():
     datamodule.prepare_data()
     datamodule.setup()
 
@@ -71,14 +80,13 @@ def main():
     args = parse_args()
 
     train_okra_word2vec_model(
-        args.chems,
-        args.startdate.date(),
-        args.enddate.date(),
-        relativedelta(months=args.valperiod),
-        relativedelta(months=args.testperiod),
-        args.cachedir,
-        args.logdir,
-        args.modeldir,
+        date_from=args.startdate.date(),
+        date_to=args.enddate.date(),
+        period_val=relativedelta(months=args.valperiod),
+        period_test=relativedelta(months=args.testperiod),
+        cache_dir=args.cachedir,
+        log_dir=args.logdir,
+        model_dir=args.modeldir,
     )
 
 
