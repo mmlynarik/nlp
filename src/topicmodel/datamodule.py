@@ -13,6 +13,7 @@ from dateutil.relativedelta import relativedelta
 from topicmodel.queries import QUERY_OKRA_DATA_PG
 from topicmodel.config import OKRA_DB
 from topicmodel.dataset import OKRAWord2VecDataset
+from topicmodel.utils import text_to_sentences, expand_sentences_into_rows
 
 log = logging.getLogger(__name__)
 log.addHandler(logging.NullHandler())
@@ -26,7 +27,7 @@ def read_okra_data_from_db(date_from: date, date_to: date) -> pd.DataFrame:
     return df_okra
 
 
-class OKRADataModule:
+class OKRAWord2VecDataModule:
     def __init__(
         self,
         date_from: date,
@@ -57,8 +58,8 @@ class OKRADataModule:
         return df_filtered_data
 
     def _filter_data(self, df_data: pd.DataFrame) -> pd.DataFrame:
-        df_data = df_data.drop_duplicates(subset=["title", "text"])
-        df_data = df_data.drop(columns=["stars"])
+        df_data = df_data.drop_duplicates(subset=["title", "text", "sentence"])
+        df_data = df_data.drop(columns=["stars", "raw", "text", "sentences", "url"])
 
         df_data["date"] = pd.to_datetime(df_data["date"])
         df_data["year"] = df_data.date.dt.year
@@ -66,7 +67,7 @@ class OKRADataModule:
         return df_data
 
     def _create_input_tensor(self, record: pd.Series) -> str:
-        return record["text"]
+        return record["sentence"]
 
     def _create_output_tensor(self, record: pd.Series) -> int:
         return 1
@@ -89,9 +90,13 @@ class OKRADataModule:
             log.info(f"Filtered data already exists in {self._path_filtered_data} file")
             return
 
-        df_okra = read_okra_data_from_db(date_from=self.date_from, date_to=self.date_to)
+        # Read and preprocess data
+        df_data = read_okra_data_from_db(date_from=self.date_from, date_to=self.date_to)
+        df_data["sentences"] = df_data["text"].apply(lambda x: text_to_sentences(x))
+        df_data = df_data.pipe(expand_sentences_into_rows)
 
-        df_filtered_data = self._filter_data(df_okra)
+        # Filter and export data to csv
+        df_filtered_data = self._filter_data(df_data)
         df_filtered_data.to_csv(self._path_filtered_data, index=False)
 
     def setup(self, stage: Optional[str] = None):

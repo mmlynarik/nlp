@@ -2,9 +2,9 @@ import argparse
 from datetime import date, datetime
 
 from dateutil.relativedelta import relativedelta
-from topicmodel.datamodule import OKRADataModule
-from topicmodel.utils import text_to_sentences
 
+from topicmodel.datamodule import OKRAWord2VecDataModule
+from topicmodel.utils import text_to_sentences
 from topicmodel.config import DEFAULT_LOG_DIR, DEFAULT_CACHE_DIR, DEFAULT_MODEL_DIR
 
 
@@ -32,19 +32,19 @@ def parse_args() -> argparse.Namespace:
         "-t", "--testperiod", help="Length of test dataset in months", type=int,
     )
     parser.add_argument(
-        "--cachedir",
+        "--cache-dir",
         help="Path to a directory where training, validation and test data are cached",
         type=str,
         default=DEFAULT_CACHE_DIR,
     )
     parser.add_argument(
-        "--logdir",
+        "--log-dir",
         help="Path to a directory where training statistics are stored",
         type=str,
         default=DEFAULT_LOG_DIR,
     )
     parser.add_argument(
-        "--modeldir",
+        "--model-dir",
         help="Path to a directory where trained models are stored",
         type=str,
         default=DEFAULT_MODEL_DIR,
@@ -62,7 +62,7 @@ def train_okra_word2vec_model(
     model_dir: str,
 ) -> None:
     """Entrypoint function to train OKRA Word2Vec model."""
-    datamodule = OKRADataModule(
+    datamodule = OKRAWord2VecDataModule(
         date_from=date_from,
         date_to=date_to,
         period_val=period_val,
@@ -73,7 +73,8 @@ def train_okra_word2vec_model(
     datamodule.prepare_data()
     datamodule.setup()
 
-    print(text_to_sentences(list(datamodule.train_data.as_numpy_iterator())[24][1].decode("UTF8")))
+    for sent in datamodule.train_data.take(1000):
+        print(sent[1].numpy().decode("utf-8"))
 
 
 def main():
@@ -84,9 +85,9 @@ def main():
         date_to=args.enddate.date(),
         period_val=relativedelta(months=args.valperiod),
         period_test=relativedelta(months=args.testperiod),
-        cache_dir=args.cachedir,
-        log_dir=args.logdir,
-        model_dir=args.modeldir,
+        cache_dir=args.cache_dir,
+        log_dir=args.log_dir,
+        model_dir=args.model_dir,
     )
 
 

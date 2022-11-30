@@ -43,6 +43,9 @@ dbd:
 	sudo rm -rf ~/data
 	docker rm -f postgres
 
+train:
+	train_okra_model -s 2011-01-01 -e 2019-12-01 -v 1 -t 1
+
 commit:
 	pre-commit run --all-files
 
