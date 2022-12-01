@@ -10,9 +10,10 @@ import psycopg2
 from tqdm.auto import tqdm
 from dateutil.relativedelta import relativedelta
 
-from topicmodel.queries import QUERY_OKRA_DATA_PG
-from topicmodel.config import OKRA_DB
-from topicmodel.dataset import OKRAWord2VecDataset
+from topicmodel.datamodule.queries import QUERY_OKRA_DATA_PG
+from topicmodel.config import OKRA_DB, MAX_SEQ_LEN, VOCAB_SIZE
+from topicmodel.datamodule.dataset import OKRAWord2VecDataset
+from topicmodel.datamodule.tokenizers import WordTokenizer
 from topicmodel.utils import text_to_sentences, expand_sentences_into_rows
 
 log = logging.getLogger(__name__)
@@ -70,7 +71,7 @@ class OKRAWord2VecDataModule:
         return record["sentence"]
 
     def _create_output_tensor(self, record: pd.Series) -> int:
-        return 1
+        return -1  # not applicable for word2vec
 
     def _extract_tensors(self, df_data: pd.DataFrame, desc: str) -> tuple[tf.Tensor, tf.Tensor, tf.Tensor]:
         ids, inputs, outputs = [], [], []
@@ -98,6 +99,8 @@ class OKRAWord2VecDataModule:
         # Filter and export data to csv
         df_filtered_data = self._filter_data(df_data)
         df_filtered_data.to_csv(self._path_filtered_data, index=False)
+
+        tokenizer = WordTokenizer(vocab_size=VOCAB_SIZE, max_seq_len=MAX_SEQ_LEN)
 
     def setup(self, stage: Optional[str] = None):
         df_filtered_data = self._get_filtered_data()

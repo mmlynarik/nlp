@@ -16,14 +16,14 @@ def parse_args() -> argparse.Namespace:
         "--startdate",
         help="The start date - format YYYY-MM-DD",
         required=True,
-        type=lambda s: datetime.strptime(s, "%Y-%m-%d"),
+        type=lambda dt: datetime.strptime(dt, "%Y-%m-%d").date(),
     )
     parser.add_argument(
         "-e",
         "--enddate",
         help="The end date format YYYY-MM-DD",
         required=True,
-        type=lambda s: datetime.strptime(s, "%Y-%m-%d"),
+        type=lambda s: datetime.strptime(s, "%Y-%m-%d").date(),
     )
     parser.add_argument(
         "-v", "--valperiod", help="Length of validation dataset in months", type=int,
@@ -74,6 +74,7 @@ def train_okra_word2vec_model(
     datamodule.setup()
 
     for sent in datamodule.train_data.take(1000):
+        # print(sent)
         print(sent[1].numpy().decode("utf-8"))
 
 
@@ -81,8 +82,8 @@ def main():
     args = parse_args()
 
     train_okra_word2vec_model(
-        date_from=args.startdate.date(),
-        date_to=args.enddate.date(),
+        date_from=args.startdate,
+        date_to=args.enddate,
         period_val=relativedelta(months=args.valperiod),
         period_test=relativedelta(months=args.testperiod),
         cache_dir=args.cache_dir,
