@@ -3,7 +3,7 @@ from datetime import date, datetime
 
 from dateutil.relativedelta import relativedelta
 
-from topicmodel.datamodule import OKRAWord2VecDataModule
+from topicmodel.datamodule.datamodule import OKRAWord2VecDataModule
 from topicmodel.utils import text_to_sentences
 from topicmodel.config import DEFAULT_LOG_DIR, DEFAULT_CACHE_DIR, DEFAULT_MODEL_DIR
 
