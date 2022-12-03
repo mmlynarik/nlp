@@ -7,13 +7,14 @@ class WordTokenizer(text.TextVectorization):
 
     def __init__(
         self,
-        vocab_size: int,
-        max_seq_len: int,
+        max_tokens: int,
+        out_seq_len: int,
+        output_mode: int,
         standardize: str = "lower_and_strip_punctuation",
         split: str = "whitespace",
     ):
         super().__init__(
-            max_tokens=vocab_size, output_sequence_length=max_seq_len, standardize=standardize, split=split,
+            max_tokens=max_tokens, output_sequence_length=out_seq_len, standardize=standardize, split=split,
         )
 
     def encode(self, inputs: str) -> tf.Tensor:

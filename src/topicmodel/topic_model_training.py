@@ -4,7 +4,6 @@ from datetime import date, datetime
 from dateutil.relativedelta import relativedelta
 
 from topicmodel.datamodule.datamodule import OKRAWord2VecDataModule
-from topicmodel.utils import text_to_sentences
 from topicmodel.config import DEFAULT_LOG_DIR, DEFAULT_CACHE_DIR, DEFAULT_MODEL_DIR
 
 
@@ -73,9 +72,9 @@ def train_okra_word2vec_model(
     datamodule.prepare_data()
     datamodule.setup()
 
-    for sent in datamodule.train_data.take(1000):
-        # print(sent)
+    for sent in datamodule.train_data.take(10):
         print(sent[1].numpy().decode("utf-8"))
+    print(datamodule.tokenizer.get_vocabulary()[:20])
 
 
 def main():

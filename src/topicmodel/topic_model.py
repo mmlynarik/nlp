@@ -7,7 +7,7 @@ from keras import layers
 from keras.preprocessing.sequence import skipgrams
 from keras.layers.preprocessing import text_vectorization as text
 
-from topicmodel.utils import text_to_sentences
+from topicmodel.datamodule.utils import text_to_sentences
 from topicmodel.datamodule.tokenizers import WordTokenizer
 
 
@@ -83,7 +83,7 @@ print("Loss:", loss)
 
 model.summary()
 
-tokenizer = WordTokenizer(vocab_size=10000, max_seq_len=10)
+tokenizer = WordTokenizer(num_tokens=10000, max_seq_len=10)
 corpus = ["Hello!", "I have a dream. What about you? Are you okay, Mr. Bean?", "Nice job."]
 print(text_to_sentences(corpus[1]))
 tokenizer.adapt(corpus)

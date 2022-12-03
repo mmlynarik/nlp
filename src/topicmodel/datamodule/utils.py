@@ -1,6 +1,20 @@
 import re
+import warnings
+from datetime import date
 
 import pandas as pd
+import psycopg2
+
+from topicmodel.config import OKRA_DB
+from topicmodel.datamodule.queries import QUERY_OKRA_DATA_PG
+
+
+def read_okra_data_from_db(date_from: date, date_to: date) -> pd.DataFrame:
+    with warnings.catch_warnings():  # ignore pandas issue #45660
+        warnings.simplefilter("ignore", UserWarning)
+        with psycopg2.connect(**OKRA_DB) as conn:
+            df_okra = pd.read_sql(QUERY_OKRA_DATA_PG.format(date_from=date_from, date_to=date_to), conn)
+    return df_okra
 
 
 def text_to_sentences(text: str) -> list[str]:
@@ -54,9 +68,9 @@ def text_to_sentences(text: str) -> list[str]:
     return sentences
 
 
-def expand_sentences_into_rows(df_data: pd.DataFrame) -> pd.DataFrame:
+def expand_sentences_into_rows(df_data: pd.DataFrame, outcol: str) -> pd.DataFrame:
     output_data = []
     for _, row in df_data.iterrows():
         for sentence in row["sentences"]:
-            output_data.append({**row.to_dict(), "sentence": sentence})
+            output_data.append({**row.to_dict(), outcol: sentence})
     return pd.DataFrame(output_data)
