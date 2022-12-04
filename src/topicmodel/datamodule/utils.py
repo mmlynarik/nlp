@@ -3,6 +3,7 @@ import warnings
 from datetime import date
 
 import pandas as pd
+import tensorflow as tf
 import psycopg2
 
 from topicmodel.config import OKRA_DB
@@ -68,9 +69,13 @@ def text_to_sentences(text: str) -> list[str]:
     return sentences
 
 
-def expand_sentences_into_rows(df_data: pd.DataFrame, outcol: str) -> pd.DataFrame:
+def expand_sentences_into_rows(df_data: pd.DataFrame, idcol: str, outcol: str) -> pd.DataFrame:
     output_data = []
     for _, row in df_data.iterrows():
-        for sentence in row["sentences"]:
-            output_data.append({**row.to_dict(), outcol: sentence})
+        for idx, sentence in enumerate(row["sentences"]):
+            output_data.append({**row.to_dict(), idcol: row[idcol] + idx / 10, outcol: sentence})
     return pd.DataFrame(output_data)
+
+
+def tf_decode(tensor: tf.Tensor):
+    return tensor.numpy().decode("utf-8")

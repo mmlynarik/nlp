@@ -5,6 +5,7 @@ from dateutil.relativedelta import relativedelta
 
 from topicmodel.datamodule.datamodule import OKRAWord2VecDataModule
 from topicmodel.config import DEFAULT_LOG_DIR, DEFAULT_CACHE_DIR, DEFAULT_MODEL_DIR
+from topicmodel.datamodule.utils import tf_decode
 
 
 def parse_args() -> argparse.Namespace:
@@ -70,11 +71,13 @@ def train_okra_word2vec_model(
     )
 
     datamodule.prepare_data()
-    datamodule.setup()
+    datamodule.setup("fit")
 
-    for sent in datamodule.train_data.take(10):
-        print(sent[1].numpy().decode("utf-8"))
-    print(datamodule.tokenizer.get_vocabulary()[:20])
+    print(f"Vocab (20 words): {datamodule.tokenizer.idx2word[:20]}")
+    print(f"Vocab size: {datamodule.tokenizer.vocabulary_size()}")
+    print(f"Corpus: {datamodule.sentence_corpus[:10]}")
+    print(f"Encoded corpus: {datamodule.encoded_corpus[:10]}")
+    print(f"Word counts: {list(datamodule.word_counts.items())[:10]}")
 
 
 def main():

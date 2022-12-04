@@ -10,12 +10,6 @@ from keras.layers.preprocessing import text_vectorization as text
 from topicmodel.datamodule.utils import text_to_sentences
 from topicmodel.datamodule.tokenizers import WordTokenizer
 
-
-class OKRAWord2VecDataset(tf.data.Dataset):
-    def __new__(cls, data: list[tf.Tensor]):
-        return tf.data.Dataset.from_tensor_slices(data)
-
-
 tf.random.set_seed(1)
 
 BATCH_SIZE = 1
@@ -25,66 +19,53 @@ EMBEDDING_DIM = 5
 DENSE_DIM = 2
 HIDDEN_DIM = 3
 
-TV = text.TextVectorization()
-
 token_ids = np.array([[1, 2, 0, 0]])
 data_out = np.arange(24).reshape(BATCH_SIZE, MAX_SEQ_LEN, 2 * HIDDEN_DIM)
 
 # Flatten layer does not propagate nor consume mask produced by Embedding layer.
 
 
-class OKRADataset(tf.data.Dataset):
-    def __new__(cls, data: list[tuple[tf.Tensor, tf.Tensor]]):
-        return tf.data.Dataset.from_tensor_slices(data)
+# class LSTMOkraModel(keras.Model):
+#     def __init__(
+#         self, max_seq_len: int, embedding_dim: int, vocab_size: int, dense_dim: int, hidden_dim: int,
+#     ):
+#         super().__init__()
+#         self.embedding = layers.Embedding(vocab_size, embedding_dim, mask_zero=True)
+#         self.lstm = layers.Bidirectional(layers.LSTM(hidden_dim), merge_mode="sum")
+#         self.dense = layers.Dense(2 * hidden_dim)
+#         self.call(layers.Input(shape=(max_seq_len,)))
+
+#     def call(self, input_tensor):
+#         x = self.embedding(input_tensor)
+#         x = self.lstm(x)
+#         x = self.dense(x)
+#         return x
+
+#     @property
+#     def output_shape(self):
+#         return self.layers[-1].output_shape[1:]
 
 
-class OKRADataLoader(tf.data.Dataset):
-    def __new__(cls, dataset: tf.data.Dataset, batch_size: int):
-        batched_dataset = dataset.batch(batch_size)
-        # TODO: Add .map() transformations here e.g. to tokenize the input strings
-        return batched_dataset
+# model = LSTMOkraModel(
+#     max_seq_len=MAX_SEQ_LEN,
+#     embedding_dim=EMBEDDING_DIM,
+#     vocab_size=VOCAB_SIZE,
+#     dense_dim=DENSE_DIM,
+#     hidden_dim=HIDDEN_DIM,
+# )
+# model.compile(loss="mse", optimizer="adam")
+# preds = model.predict(token_ids)
+# loss = model.evaluate(token_ids, data_out, verbose=0)
 
+# print("Predictions:\n", preds)
+# print("Loss:", loss)
+# # print("Loss (recalc):", np.sum(np.square(preds[0, :2] - data_out[0, :2])) / math.prod(model.output_shape))
 
-class LSTMOkraModel(keras.Model):
-    def __init__(
-        self, max_seq_len: int, embedding_dim: int, vocab_size: int, dense_dim: int, hidden_dim: int,
-    ):
-        super().__init__()
-        self.embedding = layers.Embedding(vocab_size, embedding_dim, mask_zero=True)
-        self.lstm = layers.Bidirectional(layers.LSTM(hidden_dim), merge_mode="sum")
-        self.dense = layers.Dense(2 * hidden_dim)
-        self.call(layers.Input(shape=(max_seq_len,)))
+# model.summary()
 
-    def call(self, input_tensor):
-        x = self.embedding(input_tensor)
-        x = self.lstm(x)
-        x = self.dense(x)
-        return x
-
-    @property
-    def output_shape(self):
-        return self.layers[-1].output_shape[1:]
-
-
-model = LSTMOkraModel(
-    max_seq_len=MAX_SEQ_LEN,
-    embedding_dim=EMBEDDING_DIM,
-    vocab_size=VOCAB_SIZE,
-    dense_dim=DENSE_DIM,
-    hidden_dim=HIDDEN_DIM,
-)
-model.compile(loss="mse", optimizer="adam")
-preds = model.predict(token_ids)
-loss = model.evaluate(token_ids, data_out, verbose=0)
-
-print("Predictions:\n", preds)
-print("Loss:", loss)
-# print("Loss (recalc):", np.sum(np.square(preds[0, :2] - data_out[0, :2])) / math.prod(model.output_shape))
-
-model.summary()
-
-tokenizer = WordTokenizer(num_tokens=10000, max_seq_len=10)
+tokenizer = WordTokenizer(max_tokens=10000, out_seq_len=20, output_mode="int")
 corpus = ["Hello!", "I have a dream. What about you? Are you okay, Mr. Bean?", "Nice job."]
 print(text_to_sentences(corpus[1]))
 tokenizer.adapt(corpus)
 print(tokenizer.encode(corpus[1]))
+print(tokenizer.get_vocabulary())

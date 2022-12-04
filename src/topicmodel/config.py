@@ -13,5 +13,5 @@ DEFAULT_CACHE_DIR = os.path.join("./data")
 DEFAULT_LOG_DIR = os.path.join("./logs")
 DEFAULT_MODEL_DIR = os.path.join(os.path.dirname(__file__), "trained_models")
 
-VOCAB_SIZE = 32768
-SEQ_LEN = 64
+MAX_VOCAB_SIZE = 32768
+SEQ_LEN = 32
