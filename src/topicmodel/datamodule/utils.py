@@ -35,6 +35,19 @@ def join_regexes(patterns: list[regex.Pattern]):
     return "".join(x.pattern for x in patterns)
 
 
+def rectify_base_typos(string: str) -> str:
+    replacements = [
+        (RE_TYPO_BASE_DELIMITERS_AFTER_SPACE, RE_FIX_BASE_DELIMITERS),
+        (RE_TYPO_BASE_DELIMITERS_SQUEEZED, RE_FIX_BASE_DELIMITERS),
+        (RE_TYPO_BASE_DELIMITERS_CENTERED, RE_FIX_BASE_DELIMITERS),
+        (RE_TYPO_MULTIPLE_SPACE, RE_FIX_SINGLE_SPACE),
+        (RE_TYPO_LOWERCASE_START_OF_SENTENCE, RE_FIX_UPPERCASE_START_OF_SENTENCE),
+    ]
+    for typo, fix in replacements:
+        string = regex.sub(typo, fix, string)
+    return string
+
+
 def split_text_to_sentences_regex(rectified_string: str) -> list[str]:
     """First fix end-of-sentences typos and then split the text on correct end-of-sentences whitespace."""
     rectified_string = rectify_base_typos(rectified_string)
@@ -54,19 +67,6 @@ def expand_sentences_into_rows(df_data: pd.DataFrame, idcol: str, outcol: str) -
                 }
             )
     return pd.DataFrame(output_data)
-
-
-def rectify_base_typos(string: str) -> str:
-    replacements = [
-        (RE_TYPO_BASE_DELIMITERS_AFTER_SPACE, RE_FIX_BASE_DELIMITERS),
-        (RE_TYPO_BASE_DELIMITERS_SQUEEZED, RE_FIX_BASE_DELIMITERS),
-        (RE_TYPO_BASE_DELIMITERS_CENTERED, RE_FIX_BASE_DELIMITERS),
-        (RE_TYPO_MULTIPLE_SPACE, RE_FIX_SINGLE_SPACE),
-        (RE_TYPO_LOWERCASE_START_OF_SENTENCE, RE_FIX_UPPERCASE_START_OF_SENTENCE),
-    ]
-    for typo, fix in replacements:
-        string = regex.sub(typo, fix, string)
-    return string
 
 
 def tf_decode(tensor: tf.Tensor):
