@@ -23,9 +23,13 @@ def read_okra_data_from_db(date_from: date, date_to: date) -> pd.DataFrame:
     return df_okra
 
 
+def join_regexes(patterns: list[re.Pattern]):
+    return "".join(x.pattern for x in patterns)
+
+
 def find_typo_unsplit_sentences(string: str) -> list[str]:
     """Find all typos with no whitespace between [.?!] and new sentence."""
-    pattern = "".join(x.pattern for x in [RE_CONTEXT, RE_SPLITTER_TEXT_ON_TYPO_UNSPLIT_SENTENCES, RE_CONTEXT])
+    pattern = join_regexes([RE_CONTEXT, RE_SPLITTER_TEXT_ON_TYPO_UNSPLIT_SENTENCES, RE_CONTEXT])
     return re.findall(pattern, string)
 
 
@@ -38,10 +42,10 @@ def split_typo_unsplit_sentences(string: str) -> str:
     return " ".join(re.split(RE_SPLITTER_TEXT_ON_TYPO_UNSPLIT_SENTENCES, string))
 
 
-def split_text_to_sentences_regex(string: str) -> list[str]:
+def split_text_to_sentences_regex(rectified_string: str) -> list[str]:
     """First fix unsplit sentences typos and then split the text on correct end-of-sentences whitespace."""
-    string = split_typo_unsplit_sentences(string)
-    return re.split(RE_SPLITTER_SENTENCE, string)
+    rectified_string = split_typo_unsplit_sentences(rectified_string)
+    return re.split(RE_SPLITTER_SENTENCE, rectified_string)
 
 
 def expand_sentences_into_rows(df_data: pd.DataFrame, idcol: str, outcol: str) -> pd.DataFrame:
@@ -54,9 +58,3 @@ def expand_sentences_into_rows(df_data: pd.DataFrame, idcol: str, outcol: str) -
 
 def tf_decode(tensor: tf.Tensor):
     return tensor.numpy().decode("utf-8")
-
-
-old_text = "Hello, how are you!I'm fine, thanks!And you?"
-text = """On 10th May I received a refund from Virgin for a trip to Preston from Edinburgh on 22nd April which had arrived over 2 hours late.Unfortunately there were 5 of us on the trip but the refund was only for 1 ticket.I immediately went on live chat as requested but they said they couldn't deal with that and I should email in.I also tried phoning but it just kept ringing.Since then I have emailed twice but only get automated responses and then nothing.The letter I received is very pleased with itself for dealing with my complaint so promptly .If only it was dealt with as I am due to refund money to the others and can't get it finished with.If there was a decent alternative I would never use this lot again as trains I get are invariably late."""
-
-print(split_text_to_sentences_regex(old_text), "\n")
