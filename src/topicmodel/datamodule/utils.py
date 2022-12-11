@@ -59,5 +59,4 @@ def tf_decode(tensor: tf.Tensor):
 old_text = "Hello, how are you!I'm fine, thanks!And you?"
 text = """On 10th May I received a refund from Virgin for a trip to Preston from Edinburgh on 22nd April which had arrived over 2 hours late.Unfortunately there were 5 of us on the trip but the refund was only for 1 ticket.I immediately went on live chat as requested but they said they couldn't deal with that and I should email in.I also tried phoning but it just kept ringing.Since then I have emailed twice but only get automated responses and then nothing.The letter I received is very pleased with itself for dealing with my complaint so promptly .If only it was dealt with as I am due to refund money to the others and can't get it finished with.If there was a decent alternative I would never use this lot again as trains I get are invariably late."""
 
-print(split_text_to_sentences(old_text), "\n")
 print(split_text_to_sentences_regex(old_text), "\n")
