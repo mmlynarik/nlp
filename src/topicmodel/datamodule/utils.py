@@ -14,7 +14,7 @@ RE_SPLITTER_TEXT_ON_TYPO_UNSPLIT_SENTENCES = regex.compile(r"(?<=[^A-Z].[.!?])\b
 RE_SPLITTER_SENTENCE = regex.compile(r"(?<=[^A-Z].[.!?]) +(?=[A-Z])")
 RE_CONTEXT = regex.compile(r".......")
 
-RE_TYPO_BASE_DELIMITERS_ALIGNED_RIGHT = regex.compile(r"(?<=\w\w) ([.,?!]+)(?=\w\w)")
+RE_TYPO_BASE_DELIMITERS_AFTER_SPACE = regex.compile(r"(?<=\w\w) ([.,?!]+)")
 RE_TYPO_BASE_DELIMITERS_SQUEEZED = regex.compile(r"(?<=\w\w)([.,?!]+)(?=\w\w)")
 RE_TYPO_BASE_DELIMITERS_CENTERED = regex.compile(r"(?<=\w\w) ([.,?!]+) (?=\w\w)")
 RE_TYPO_MULTIPLE_SPACE = regex.compile(r" +")
@@ -75,7 +75,7 @@ def expand_sentences_into_rows(df_data: pd.DataFrame, idcol: str, outcol: str) -
 
 def rectify_base_typos(string: str) -> str:
     replacements = [
-        (RE_TYPO_BASE_DELIMITERS_ALIGNED_RIGHT, RE_FIX_BASE_DELIMITERS),
+        (RE_TYPO_BASE_DELIMITERS_AFTER_SPACE, RE_FIX_BASE_DELIMITERS),
         (RE_TYPO_BASE_DELIMITERS_SQUEEZED, RE_FIX_BASE_DELIMITERS),
         (RE_TYPO_BASE_DELIMITERS_CENTERED, RE_FIX_BASE_DELIMITERS),
         (RE_TYPO_MULTIPLE_SPACE, RE_FIX_SINGLE_SPACE),
