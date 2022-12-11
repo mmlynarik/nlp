@@ -10,9 +10,7 @@ from topicmodel.config import OKRA_DB
 from topicmodel.datamodule.queries import QUERY_OKRA_DATA_PG
 
 
-RE_SPLITTER_TEXT_ON_TYPO_UNSPLIT_SENTENCES = regex.compile(r"(?<=[^A-Z].[.!?])\b(?=[A-Z])")
 RE_SPLITTER_SENTENCE = regex.compile(r"(?<=[^A-Z].[.!?]) +(?=[A-Z])")
-RE_CONTEXT = regex.compile(r".......")
 
 RE_TYPO_BASE_DELIMITERS_AFTER_SPACE = regex.compile(r"(?<=\w\w) ([.,?!]+)")
 RE_TYPO_BASE_DELIMITERS_SQUEEZED = regex.compile(r"(?<=\w\w)([.,?!]+)(?=\w\w)")
@@ -35,21 +33,6 @@ def read_okra_data_from_db(date_from: date, date_to: date) -> pd.DataFrame:
 
 def join_regexes(patterns: list[regex.Pattern]):
     return "".join(x.pattern for x in patterns)
-
-
-def find_typo_unsplit_sentences(string: str) -> list[str]:
-    """Find all typos with no whitespace between [.?!] and new sentence."""
-    pattern = join_regexes([RE_CONTEXT, RE_SPLITTER_TEXT_ON_TYPO_UNSPLIT_SENTENCES, RE_CONTEXT])
-    return regex.findall(pattern, string)
-
-
-def get_value_counts_of_typo_unsplit_sentences(df: pd.DataFrame, col="text") -> pd.Series:
-    return df[col].apply(lambda x: tuple(find_typo_unsplit_sentences(x))).value_counts()
-
-
-def split_typo_unsplit_sentences(string: str) -> str:
-    """Find all cases of no whitespace between [.?!] and new sentence and fix them by inserting a space."""
-    return " ".join(regex.split(RE_SPLITTER_TEXT_ON_TYPO_UNSPLIT_SENTENCES, string))
 
 
 def split_text_to_sentences_regex(rectified_string: str) -> list[str]:
