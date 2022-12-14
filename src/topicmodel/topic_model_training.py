@@ -72,7 +72,7 @@ def train_okra_word2vec_model(
 
     vocab_size = VOCAB_SIZE
     embedding_dim = EMBEDDING_DIM
-    max_seq_len = SEQ_LEN
+    seq_len = SEQ_LEN
 
     datamodule = OKRAWord2VecDataModule(
         date_from=date_from,
@@ -81,7 +81,7 @@ def train_okra_word2vec_model(
         period_test=period_test,
         vocab_size=vocab_size,
         embedding_dim=embedding_dim,
-        max_seq_len=max_seq_len,
+        seq_len=seq_len,
         cache_dir=cache_dir,
     )
 
