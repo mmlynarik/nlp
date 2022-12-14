@@ -67,7 +67,3 @@ def expand_sentences_into_rows(df_data: pd.DataFrame, idcol: str, outcol: str) -
                 }
             )
     return pd.DataFrame(output_data)
-
-
-def tf_decode(tensor: tf.Tensor):
-    return tensor.numpy().decode("utf-8")
