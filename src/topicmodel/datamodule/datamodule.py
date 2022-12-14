@@ -94,24 +94,6 @@ class OKRAWord2VecDataModule:
         outputs = (-1 * np.ones_like(keys)).astype(str)
         return tf.constant(keys), tf.constant(inputs), tf.constant(outputs)
 
-    def prepare_data(self) -> None:
-        if not os.path.exists(self.cache_dir):
-            os.makedirs(self.cache_dir)
-            log.info(f"Cache directory {self.cache_dir} created.")
-
-        if os.path.exists(self._path_filtered_data):
-            log.info(f"Filtered data already exists in {self._path_filtered_data} file")
-            return
-
-        # Read and preprocess data
-        df_data = read_okra_data_from_db(date_from=self.date_from, date_to=self.date_to)
-        df_data["sentences"] = df_data["text"].apply(lambda x: split_text_to_sentences_regex(x))
-        df_data = df_data.pipe(expand_sentences_into_rows, outcol="sentence", idcol="id")
-
-        # Filter data and export it to csv
-        df_filtered_data = self._filter_data(df_data)
-        df_filtered_data.to_csv(self._path_filtered_data, index=False)
-
     def _get_split_masks(
         self, filtered_data: pd.DataFrame
     ) -> tuple[tuple[pd.Series, pd.Series, pd.Series], tuple[date, date, date, date]]:
@@ -138,27 +120,29 @@ class OKRAWord2VecDataModule:
         idx2word = self.tokenizer.idx2word  # Local variable prevents repetitive calculation of vocabulary
         return {idx2word[idx]: count for idx, count in sorted(index_counts.items())}
 
-    def word_counts_to_csv(self):
-        pd.DataFrame(self.word_counts, index=["count"]).T.reset_index().to_csv(
-            self._path_word_counts, index=False, encoding="UTF-8-SIG"
-        )
-
-    def string_dataset_to_csv(self):
-        pd.DataFrame(get_printable_string_dataset(self.string_dataset)).to_csv(
-            self._path_string_dataset, index=False, encoding="UTF-8-SIG"
-        )
-
-    # def vocab_to_csv(self):
-    #     vocab = {word: 1 for word in self.tokenizer.get_vocabulary()}
-    #     pd.DataFrame(vocab, index=["count"]).T.reset_index().to_csv(
-    #         os.path.join(DEFAULT_CACHE_DIR, "vocab.csv"), index=False, encoding="UTF-8-SIG"
-    #     )
-
     def _get_encoded_dataset_tensors(self) -> tuple[tf.Tensor, tf.Tensor, tf.Tensor]:
         encoded_corpus = self.tokenizer.encode(get_corpus_tensor(self.string_dataset))
         keys = get_keys_tensor(self.string_dataset)
         outputs = get_outputs_tensor(self.string_dataset)
         return keys, encoded_corpus, outputs
+
+    def prepare_data(self) -> None:
+        if not os.path.exists(self.cache_dir):
+            os.makedirs(self.cache_dir)
+            log.info(f"Cache directory {self.cache_dir} created.")
+
+        if os.path.exists(self._path_filtered_data):
+            log.info(f"Filtered data already exists in {self._path_filtered_data} file")
+            return
+
+        # Read and preprocess data
+        df_data = read_okra_data_from_db(date_from=self.date_from, date_to=self.date_to)
+        df_data["sentences"] = df_data["text"].apply(lambda x: split_text_to_sentences_regex(x))
+        df_data = df_data.pipe(expand_sentences_into_rows, outcol="sentence", idcol="id")
+
+        # Filter data and export it to csv
+        df_filtered_data = self._filter_data(df_data)
+        df_filtered_data.to_csv(self._path_filtered_data, index=False)
 
     def setup(self, stage: Optional[str] = None):
         df_filtered_data = self._get_filtered_data()
@@ -180,3 +164,19 @@ class OKRAWord2VecDataModule:
 
         if stage is None or stage == "test":
             raise NotImplementedError("Test set is not applicable in Word2Vec model training.")
+
+    def word_counts_to_csv(self):
+        pd.DataFrame(self.word_counts, index=["count"]).T.reset_index().to_csv(
+            self._path_word_counts, index=False, encoding="UTF-8-SIG"
+        )
+
+    def string_dataset_to_csv(self):
+        pd.DataFrame(get_printable_string_dataset(self.string_dataset)).to_csv(
+            self._path_string_dataset, index=False, encoding="UTF-8-SIG"
+        )
+
+    # def vocab_to_csv(self):
+    #     vocab = {word: 1 for word in self.tokenizer.get_vocabulary()}
+    #     pd.DataFrame(vocab, index=["count"]).T.reset_index().to_csv(
+    #         os.path.join(DEFAULT_CACHE_DIR, "vocab.csv"), index=False, encoding="UTF-8-SIG"
+    #     )
