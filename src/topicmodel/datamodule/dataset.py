@@ -34,7 +34,4 @@ def get_corpus_dataset(dataset: tf.data.Dataset) -> tf.data.Dataset:
 
 
 def get_printable_string_dataset(dataset: tf.data.Dataset) -> list[dict]:
-    return [
-        {"key": key.decode(), "review": x.decode(), "output": y.decode()}
-        for key, x, y in dataset.as_numpy_iterator()
-    ]
+    return [{"key": key, "review": x, "output": y} for key, x, y in dataset.as_numpy_iterator()]
