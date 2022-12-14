@@ -33,7 +33,7 @@ venv:
 
 
 db:
-	docker run -d --name postgres -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -p 5432:5432 -v ${HOME}/data:/var/lib/postgresql/data postgres:15
+	docker run -d --name postgres -e POSTGRES_USER=$${OKRA_DB_USER} -e POSTGRES_PASSWORD=$${OKRA_DB_PASSWORD} -p 5432:5432 -v ${HOME}/data:/var/lib/postgresql/data postgres:15
 	sleep 2
 	cd src/djangoproject/; \
 	python manage.py migrate
@@ -46,7 +46,7 @@ dbd:
 train:
 	train_okra_model -s 2011-01-01 -e 2019-12-01 -v 0 -t 0
 
-commit:
+precommit:
 	pre-commit run --all-files
 
 posh:
