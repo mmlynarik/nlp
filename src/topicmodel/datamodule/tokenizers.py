@@ -20,22 +20,22 @@ class WordTokenizer(text.TextVectorization):
     def __init__(
         self,
         max_tokens: int,
-        out_seq_len: int,
+        seq_len: int,
         output_mode: int = "int",
         standardize: str = "lower_and_strip_punctuation",
         split: str = "whitespace",
     ):
         super().__init__(
             max_tokens=max_tokens,
-            output_sequence_length=out_seq_len,
+            output_sequence_length=seq_len,
             standardize=standardize,
             split=split,
             output_mode=output_mode,
         )
 
-    def encode(self, inputs: str) -> tf.Tensor:
-        """Get encoded input strings, each represented as a sequence of integers using learned vocabulary."""
-        return self.call(inputs)
+    def encode(self, input_tensor: tf.Tensor) -> tf.Tensor:
+        """Encode input strings tensor, into a sequence of integers using learned vocabulary."""
+        return self.call(input_tensor)
 
     @property
     def idx2word(self) -> list[str]:
@@ -44,3 +44,7 @@ class WordTokenizer(text.TextVectorization):
     @property
     def word2idx(self) -> dict[str, int]:
         return {word: idx for idx, word in enumerate(self.idx2word)}
+
+    @property
+    def vocab_size(self):
+        return self.vocabulary_size()
