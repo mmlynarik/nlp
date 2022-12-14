@@ -89,9 +89,9 @@ class OKRAWord2VecDataModule:
         raise NotImplementedError()
 
     def _get_string_dataset_tensors(self, df_data: pd.DataFrame) -> tuple[tf.Tensor, tf.Tensor, tf.Tensor]:
-        keys = df_data["id"].astype(str)
+        keys = df_data["id"]
         inputs = df_data["sentence"]
-        outputs = (-1 * np.ones_like(keys)).astype(str)
+        outputs = -1 * np.ones_like(keys)
         return tf.constant(keys), tf.constant(inputs), tf.constant(outputs)
 
     def _get_split_masks(
@@ -107,13 +107,14 @@ class OKRAWord2VecDataModule:
         return (mask_train, mask_val, mask_test), (date_from, date_val_from, date_test_from, date_to)
 
     def _get_word_counts(self) -> dict[str, int]:
-        """Generate word counts dictionary ordered by word index defined in idx2word."""
+        """
+        Generate word counts dictionary. Special tokens are set to 0, because they need to be excluded from unigram sampling distribution calculated later.
+        """
         index_counts = defaultdict(int)
         for sentence in get_corpus_tensor(self.encoded_dataset).numpy():
             for idx in sentence:
                 index_counts[idx] += 1
 
-        # Special tokens are set to 0, because they need to be excluded from unigram sampling distribution
         index_counts[0] = 0  # PAD
         index_counts[1] = 0  # UNK
 
