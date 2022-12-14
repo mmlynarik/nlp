@@ -7,7 +7,7 @@ from keras import layers
 from keras.preprocessing.sequence import skipgrams
 from keras.layers.preprocessing import text_vectorization as text
 
-from topicmodel.datamodule.utils import text_to_sentences
+from topicmodel.datamodule.utils import split_text_to_sentences_regex
 from topicmodel.datamodule.tokenizers import WordTokenizer
 
 tf.random.set_seed(1)
@@ -63,9 +63,9 @@ data_out = np.arange(24).reshape(BATCH_SIZE, MAX_SEQ_LEN, 2 * HIDDEN_DIM)
 
 # model.summary()
 
-tokenizer = WordTokenizer(max_tokens=10000, out_seq_len=20, output_mode="int")
+tokenizer = WordTokenizer(max_tokens=10000, seq_len=20, output_mode="int")
 corpus = ["Hello!", "I have a dream. What about you? Are you okay, Mr. Bean?", "Nice job."]
-print(text_to_sentences(corpus[1]))
+print(split_text_to_sentences_regex(corpus[1]))
 tokenizer.adapt(corpus)
 print(tokenizer.encode(corpus[1]))
 print(tokenizer.get_vocabulary())
