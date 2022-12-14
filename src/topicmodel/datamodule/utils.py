@@ -3,7 +3,6 @@ import warnings
 from datetime import date
 
 import pandas as pd
-import tensorflow as tf
 import psycopg2
 
 from topicmodel.config import OKRA_DB
@@ -12,9 +11,9 @@ from topicmodel.datamodule.queries import QUERY_OKRA_DATA_PG
 
 RE_SPLITTER_SENTENCE = regex.compile(r"(?<=[^A-Z].[.!?]) +(?=[A-Z])")
 
-RE_TYPO_BASE_DELIMITERS_AFTER_SPACE = regex.compile(r"(?<=\w\w) ([.,?!]+)")
-RE_TYPO_BASE_DELIMITERS_SQUEEZED = regex.compile(r"(?<=\w\w)([.,?!]+)(?=\w\w)")
-RE_TYPO_BASE_DELIMITERS_CENTERED = regex.compile(r"(?<=\w\w) ([.,?!]+) (?=\w\w)")
+RE_TYPO_BASE_DELIMITERS_AFTER_SPACE = regex.compile(r"(?<=\p{L}\p{L}) ([.,?!]+)")
+RE_TYPO_BASE_DELIMITERS_SQUEEZED = regex.compile(r"(?<=\p{L}\p{L})([.,?!]+)(?=\p{L}\p{L})")
+RE_TYPO_BASE_DELIMITERS_CENTERED = regex.compile(r"(?<=\p{L}\p{L}) ([.,?!]+) (?=\p{L}\p{L})")
 RE_TYPO_MULTIPLE_SPACE = regex.compile(r" +")
 RE_TYPO_LOWERCASE_START_OF_SENTENCE = regex.compile(r"(?<=\w\w[.?!]+ )(\p{Ll})")
 
