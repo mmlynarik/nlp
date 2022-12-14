@@ -153,12 +153,10 @@ class OKRAWord2VecDataModule:
             log.info(f"Training dataset has {len(string_dataset_tensors)} obs from {dates[0]}-{dates[1]}.")
             self.string_dataset = OKRAWord2VecStringSentenceDataset(string_dataset_tensors)
 
-            tokenizer = WordTokenizer(max_tokens=self.vocab_size, seq_len=self.seq_len)
-            tokenizer.adapt(data=get_corpus_tensor(self.string_dataset))
-            self.tokenizer = tokenizer
-            self.encoded_dataset = OKRAWord2VecEncodedSentenceDataset(self._get_encoded_dataset_tensors())
-
+            self.tokenizer = WordTokenizer(max_tokens=self.vocab_size, seq_len=self.seq_len)
+            self.tokenizer.adapt(data=get_corpus_tensor(self.string_dataset))
             self.word_counts = self._get_word_counts()
+            self.encoded_dataset = OKRAWord2VecEncodedSentenceDataset(self._get_encoded_dataset_tensors())
 
         if stage is None or stage == "validate":
             raise NotImplementedError("Validation set is not applicable in Word2Vec model training.")
