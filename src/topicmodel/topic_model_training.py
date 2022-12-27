@@ -97,10 +97,10 @@ def train_okra_word2vec_model(
         print(f"Index of {word}: {datamodule.tokenizer.word2idx[word]}")
     print(f"Word count [UNK]: {datamodule.word_counts.get('[UNK]')}")
     print(f"Word count len: {len(datamodule.word_counts)}")
-    print(f"{sorted(len(s.numpy()) for s in get_corpus_tensor(datamodule.string_dataset))}")
+    print(f"{sorted(len(s.numpy()) for s in get_corpus_tensor(datamodule.text_dataset))}")
 
     datamodule.word_counts_to_csv()
-    datamodule.string_dataset_to_csv()
+    datamodule.text_dataset_to_csv()
 
 
 def main():
