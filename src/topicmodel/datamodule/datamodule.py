@@ -11,16 +11,17 @@ from tqdm.auto import tqdm
 from dateutil.relativedelta import relativedelta
 
 from topicmodel.datamodule.dataset import (
-    OKRAWord2VecStringSentenceDataset,
+    OKRAWord2VecTextSentenceDataset,
     OKRAWord2VecEncodedSentenceDataset,
     get_corpus_tensor,
     get_keys_tensor,
     get_outputs_tensor,
-    get_printable_string_dataset,
+    text_dataset_to_list_of_dicts,
 )
 from topicmodel.datamodule.tokenizers import WordTokenizer
 from topicmodel.datamodule.utils import (
-    split_text_to_sentences_regex,
+    split_text_to_sentences,
+    preprocess,
     expand_sentences_into_rows,
     read_okra_data_from_db,
 )
@@ -51,7 +52,7 @@ class OKRAWord2VecDataModule:
         self.seq_len = seq_len
         self.batch_size = batch_size
         self.cache_dir = cache_dir
-        self.string_dataset = None
+        self.text_dataset = None
         self.val_data = None
         self.test_data = None
 
@@ -63,7 +64,7 @@ class OKRAWord2VecDataModule:
 
     @property
     def _path_string_dataset(self) -> str:
-        return os.path.join(self.cache_dir, "string_dataset.csv")
+        return os.path.join(self.cache_dir, "text_dataset.csv")
 
     @property
     def _path_word_counts(self) -> str:
@@ -88,7 +89,7 @@ class OKRAWord2VecDataModule:
     def _create_output_tensor(self, record: pd.Series) -> tf.Tensor:
         raise NotImplementedError()
 
-    def _get_string_dataset_tensors(self, df_data: pd.DataFrame) -> tuple[tf.Tensor, tf.Tensor, tf.Tensor]:
+    def _get_text_dataset_tensors(self, df_data: pd.DataFrame) -> tuple[tf.Tensor, tf.Tensor, tf.Tensor]:
         keys = df_data["id"]
         inputs = df_data["sentence"]
         outputs = -1 * np.ones_like(keys)
@@ -108,7 +109,7 @@ class OKRAWord2VecDataModule:
 
     def _get_word_counts(self) -> dict[str, int]:
         """
-        Generate word counts dictionary. Special tokens are set to 0, because they need to be excluded from unigram sampling distribution calculated later.
+        Generate word counts dictionary. Special tokens are set to 0, because they need to be excluded from unigram sampling distribution calculated later. Local variable idx2word prevents repetitive calculation of vocabulary resulting in severe performance drop.
         """
         index_counts = defaultdict(int)
         for sentence in get_corpus_tensor(self.encoded_dataset).numpy():
@@ -118,13 +119,13 @@ class OKRAWord2VecDataModule:
         index_counts[0] = 0  # PAD
         index_counts[1] = 0  # UNK
 
-        idx2word = self.tokenizer.idx2word  # Local variable prevents repetitive calculation of vocabulary
+        idx2word = self.tokenizer.idx2word
         return {idx2word[idx]: count for idx, count in sorted(index_counts.items())}
 
     def _get_encoded_dataset_tensors(self) -> tuple[tf.Tensor, tf.Tensor, tf.Tensor]:
-        encoded_corpus = self.tokenizer.encode(get_corpus_tensor(self.string_dataset))
-        keys = get_keys_tensor(self.string_dataset)
-        outputs = get_outputs_tensor(self.string_dataset)
+        encoded_corpus = self.tokenizer.encode(get_corpus_tensor(self.text_dataset))
+        keys = get_keys_tensor(self.text_dataset)
+        outputs = get_outputs_tensor(self.text_dataset)
         return keys, encoded_corpus, outputs
 
     def prepare_data(self) -> None:
@@ -138,41 +139,41 @@ class OKRAWord2VecDataModule:
 
         # Read and preprocess data
         df_data = read_okra_data_from_db(date_from=self.date_from, date_to=self.date_to)
-        df_data["sentences"] = df_data["text"].apply(lambda x: split_text_to_sentences_regex(x))
+        df_data["text"] = df_data["text"].apply(lambda x: preprocess(x))
+        df_data["sentences"] = df_data["text"].apply(lambda x: split_text_to_sentences(x))
         df_data = df_data.pipe(expand_sentences_into_rows, outcol="sentence", idcol="id")
 
         # Filter data and export it to csv
         df_filtered_data = self._filter_data(df_data)
         df_filtered_data.to_csv(self._path_filtered_data, index=False)
 
-    def setup(self, stage: Optional[str] = None):
+    def setup(self, stage: Optional[str] = None) -> None:
         df_filtered_data = self._get_filtered_data()
         if stage is None or stage == "fit":
             masks, dates = self._get_split_masks(df_filtered_data)
-            string_dataset_tensors = self._get_string_dataset_tensors(df_filtered_data[masks[0]])
-            log.info(f"Training dataset has {len(string_dataset_tensors)} obs from {dates[0]}-{dates[1]}.")
-            self.string_dataset = OKRAWord2VecStringSentenceDataset(string_dataset_tensors)
+            text_dataset_tensors = self._get_text_dataset_tensors(df_filtered_data[masks[0]])
+            log.info(f"Training dataset has {len(text_dataset_tensors)} obs from {dates[0]}-{dates[1]}.")
+            self.text_dataset = OKRAWord2VecTextSentenceDataset(text_dataset_tensors)
 
             self.tokenizer = WordTokenizer(max_tokens=self.vocab_size, seq_len=self.seq_len)
-            self.tokenizer.adapt(data=get_corpus_tensor(self.string_dataset))
-            self.word_counts = self._get_word_counts()
+            self.tokenizer.adapt(data=get_corpus_tensor(self.text_dataset))
             self.encoded_dataset = OKRAWord2VecEncodedSentenceDataset(self._get_encoded_dataset_tensors())
+            self.word_counts = self._get_word_counts()
 
         if stage is None or stage == "validate":
-            raise NotImplementedError("Validation set is not applicable in Word2Vec model training.")
+            raise NotImplementedError("Validation set is not applicable in Word2Vec model.")
 
         if stage is None or stage == "test":
-            raise NotImplementedError("Test set is not applicable in Word2Vec model training.")
+            raise NotImplementedError("Test set is not applicable in Word2Vec model.")
 
-    def word_counts_to_csv(self):
+    def word_counts_to_csv(self) -> None:
         pd.DataFrame(self.word_counts, index=["count"]).T.reset_index().to_csv(
             self._path_word_counts, index=False, encoding="UTF-8-SIG"
         )
 
-    def string_dataset_to_csv(self):
-        pd.DataFrame(get_printable_string_dataset(self.string_dataset)).to_csv(
-            self._path_string_dataset, index=False, encoding="UTF-8-SIG"
-        )
+    def text_dataset_to_csv(self) -> None:
+        data = text_dataset_to_list_of_dicts(self.text_dataset)
+        pd.DataFrame(data).to_csv(self._path_string_dataset, index=False, encoding="UTF-8-SIG")
 
     # def vocab_to_csv(self):
     #     vocab = {word: 1 for word in self.tokenizer.get_vocabulary()}
