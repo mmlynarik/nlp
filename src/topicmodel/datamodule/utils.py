@@ -23,9 +23,15 @@ RE_FIX_UPPERCASE_START_OF_SENTENCE = lambda x: x.group(1).upper()
 RE_FIX_SINGLE_SPACE = r" "
 RE_FIX_SINGLE_EMOTION_DELIMITER = lambda x: x.group(1)[0]
 
+RE_EN_CCY_SIGN = r"\p{Sc}\d+(,\d+)*(\.\d\d)?"
+RE_EN_CCY_NAME = r"\d+ ?([dD]ollars?|[eE]uros?|[pP]ounds?)"
 RE_EN_TIME = r"(?<=\b)(\d?\d[.:]\d\d ?([ap]m))|(\d?\d[.:]\d\d)|(\d?\d ?([ap]m))(?=\b)"
-RE_EN_CCY = r"\p{Sc}\d+(,\d+)*(\.\d\d)?"
-RE_EN_PERIOD = r"\d+\.?\d? ?(days?|months?|years?|hours?|minutes?|weeks?|mins?|hrs?)"
+RE_EN_TIME_DELTA = r"\d+\.?\d? ?(days?|months?|years?|hours?|minutes?|weeks?|mins?|hrs?)"
+RE_EN_DATE_FWD = (
+    r"\d{1,2}(th|rd|nd|st)?( of)? (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\w*(( |, )(\d{4}))?"
+)
+RE_EN_DATE_BWD = r"(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\w* \d{1,2}(th|rd|nd|st)?, \d{4}"
+RE_NUMBER = r"\d+"
 
 
 def read_okra_data_from_db(date_from: date, date_to: date) -> pd.DataFrame:
@@ -57,7 +63,13 @@ def rectify_typos(string: str) -> str:
 
 def mask_ccy(string: str, token="[CCY]") -> str:
     """Replace currency expressions with a special token to reduce vocab size."""
-    return regex.sub(RE_EN_CCY, token, string)
+    masked_ccy = regex.sub(RE_EN_CCY_SIGN, token, string)
+    return regex.sub(RE_EN_CCY_NAME, token, masked_ccy)
+
+
+def mask_date(string: str, token="[DATE]") -> str:
+    masked_date = regex.sub(RE_EN_DATE_FWD, token, string)
+    return regex.sub(RE_EN_DATE_BWD, token, masked_date)
 
 
 def mask_time(string: str, token="[TIME]") -> str:
@@ -65,12 +77,16 @@ def mask_time(string: str, token="[TIME]") -> str:
     return regex.sub(RE_EN_TIME, token, string)
 
 
-def mask_period(string: str, token="[PERIOD]") -> str:
-    return regex.sub(RE_EN_PERIOD, token, string)
+def mask_timedelta(string: str, token="[PERIOD]") -> str:
+    return regex.sub(RE_EN_TIME_DELTA, token, string)
+
+
+def mask_number(string: str, token="[NUM]") -> str:
+    return regex.sub(RE_NUMBER, token, string)
 
 
 def mask_symbols(string: str) -> str:
-    return mask_period(mask_time(mask_ccy(string)))
+    return mask_number(mask_date(mask_timedelta(mask_time(mask_ccy(string)))))
 
 
 def preprocess(string: str) -> str:
