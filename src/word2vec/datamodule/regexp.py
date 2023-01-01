@@ -1,15 +1,9 @@
 import regex
-import warnings
-from datetime import date
-
-import pandas as pd
-import psycopg2
-
-from topicmodel.config import OKRA_DB
-from topicmodel.datamodule.queries import QUERY_OKRA_DATA_PG
 
 
-RE_SPLITTER_SENTENCE = regex.compile(r"(?<=[^A-Z].[.!?]) +(?=[A-Z])")
+def join_regexes(patterns: list[regex.Pattern]):
+    return "".join(x for x in patterns)
+
 
 RE_TYPO_BASE_DELIMITERS_AFTER_SPACE = regex.compile(r"(?<=\p{L}\p{L}) ([.,?!]+)")
 RE_TYPO_BASE_DELIMITERS_SQUEEZED = regex.compile(r"(?<=\p{L}\p{L})([.,?!]+)(?=\p{L}\p{L})")
@@ -23,27 +17,17 @@ RE_FIX_UPPERCASE_START_OF_SENTENCE = lambda x: x.group(1).upper()
 RE_FIX_SINGLE_SPACE = r" "
 RE_FIX_SINGLE_EMOTION_DELIMITER = lambda x: x.group(1)[0]
 
+RE_EN_MONTHS = r"(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)"
+RE_EN_DAY = r"\d{1,2}(th|rd|nd|st)?"
+RE_EN_YEAR = r"\d{4}"
+RE_NUMBER = r"\d+"
+
 RE_EN_CCY_SIGN = r"\p{Sc}\d+(,\d+)*(\.\d\d)?"
 RE_EN_CCY_NAME = r"\d+ ?([dD]ollars?|[eE]uros?|[pP]ounds?)"
 RE_EN_TIME = r"(?<=\b)(\d?\d[.:]\d\d ?([ap]m))|(\d?\d[.:]\d\d)|(\d?\d ?([ap]m))(?=\b)"
+RE_EN_DATE_FWD = join_regexes([RE_EN_DAY, r"( of)? ", RE_EN_MONTHS, r"\w*(( |, )(\d{4}))?"])
+RE_EN_DATE_BWD = join_regexes([RE_EN_MONTHS, r"\w* ", RE_EN_DAY, RE_EN_YEAR])
 RE_EN_TIME_DELTA = r"\d+\.?\d? ?(days?|months?|years?|hours?|minutes?|weeks?|mins?|hrs?)"
-RE_EN_DATE_FWD = (
-    r"\d{1,2}(th|rd|nd|st)?( of)? (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\w*(( |, )(\d{4}))?"
-)
-RE_EN_DATE_BWD = r"(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\w* \d{1,2}(th|rd|nd|st)?, \d{4}"
-RE_NUMBER = r"\d+"
-
-
-def read_okra_data_from_db(date_from: date, date_to: date) -> pd.DataFrame:
-    with warnings.catch_warnings():  # ignore pandas issue #45660
-        warnings.simplefilter("ignore", UserWarning)
-        with psycopg2.connect(**OKRA_DB) as conn:
-            df_okra = pd.read_sql(QUERY_OKRA_DATA_PG.format(date_from=date_from, date_to=date_to), conn)
-    return df_okra
-
-
-def join_regexes(patterns: list[regex.Pattern]):
-    return "".join(x.pattern for x in patterns)
 
 
 def rectify_typos(string: str) -> str:
@@ -85,29 +69,5 @@ def mask_number(string: str, token="[NUM]") -> str:
     return regex.sub(RE_NUMBER, token, string)
 
 
-def mask_symbols(string: str) -> str:
+def mask_non_words(string: str) -> str:
     return mask_number(mask_date(mask_timedelta(mask_time(mask_ccy(string)))))
-
-
-def preprocess(string: str) -> str:
-    return mask_symbols(rectify_typos(string))
-
-
-def split_text_to_sentences(string: str) -> list[str]:
-    """Split the text on correct end-of-sentences delimiters."""
-    return regex.split(RE_SPLITTER_SENTENCE, string)
-
-
-def expand_sentences_into_rows(df_data: pd.DataFrame, idcol: str, outcol: str) -> pd.DataFrame:
-    output_data = []
-    for _, row in df_data.iterrows():
-        for idx, sentence in enumerate(row["sentences"]):
-            output_data.append(
-                {
-                    **row.to_dict(),
-                    idcol: row[idcol] + (idx + 1) / 100,
-                    outcol: sentence,
-                    "length": len(sentence),
-                }
-            )
-    return pd.DataFrame(output_data)

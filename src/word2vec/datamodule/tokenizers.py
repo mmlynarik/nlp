@@ -5,12 +5,6 @@ import tensorflow as tf
 from keras.layers.preprocessing import text_vectorization as text
 
 
-def custom_standardization(input_data):
-    lowercase = tf.strings.lower(input_data)
-    stripped_html = tf.strings.regex_replace(lowercase, "<br />", " ")
-    return tf.strings.regex_replace(stripped_html, "[%s]" % re.escape(string.punctuation), "")
-
-
 class WordTokenizer(text.TextVectorization):
     """
     Word-level tokenizer splitting strings on whitespace after lowercasing and stripping punctuation

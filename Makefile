@@ -44,7 +44,7 @@ dbd:
 	docker rm -f postgres
 
 train:
-	train_okra_model -s 2011-01-01 -e 2019-12-01 -v 0 -t 0
+	train_okra_model -s 2011-01-01 -e 2019-12-31 -v 0 -t 0
 
 precommit:
 	pre-commit run --all-files
