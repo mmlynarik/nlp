@@ -17,8 +17,8 @@ class Word2Vec(keras.Model):
         )
         # self.call(layers.Input(shape=(,)))
 
-    def call(self, input_tensor_pair):
-        target, context = input_tensor_pair
+    def call(self, pair):
+        target, context = pair
         target_embedding = self.target_embedding(target)
         context_embedding = self.context_embedding(context)
         dots = tf.einsum("be,bce->bc", target_embedding, context_embedding)
