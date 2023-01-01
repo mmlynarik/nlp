@@ -102,6 +102,22 @@ def train_okra_word2vec_model(
     datamodule.prepare_data()
     datamodule.setup("fit")
 
+    # model = Word2Vec()
+    # max_seq_len=MAX_SEQ_LEN,
+    # embedding_dim=EMBEDDING_DIM,
+    # vocab_size=VOCAB_SIZE,
+    # dense_dim=DENSE_DIM,
+    # hidden_dim=HIDDEN_DIM,
+    # )
+    # model.compile(loss="mse", optimizer="adam")
+    # preds = model.predict(token_ids)
+    # loss = model.evaluate(token_ids, data_out, verbose=0)
+
+    # print("Predictions:\n", preds)
+    # print("Loss:", loss)
+
+    # model.summary()
+
 
 def main():
     args = parse_args()

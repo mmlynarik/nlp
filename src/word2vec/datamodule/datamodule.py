@@ -51,7 +51,7 @@ class Word2VecDataModule:
         batch_size: int,
         seq_len: int,
         cache_dir: str,
-        buffer_size: int = 100000,
+        buffer_size: int = 1000000,
     ):
         self.date_from = date_from
         self.date_to = date_to
@@ -264,8 +264,10 @@ class Word2VecDataModule:
             self.train_dataset = (
                 Word2VecSGNSDataset(self._generate_training_data())
                 .shuffle(self.buffer_size)
-                .batch(self.batch_size)
+                .batch(self.batch_size, drop_remainder=True)
+                .prefetch(1)
             )
+            log.info(f"Train dataset size: {len(self.train_dataset) * self.batch_size}")
 
         if stage is None or stage == "validate":
             raise NotImplementedError("Validation set is not applicable in Word2Vec model.")
@@ -293,8 +295,8 @@ class Word2VecDataModule:
         print(f"Vocab size (truncated): {len(self._get_truncated_word_counts()):,.0f}")
         print(f"Word index ['PAD']: {self.tokenizer.word2idx['']}")
         print(f"Word index ['UNK']: {self.tokenizer.word2idx['[UNK]']}")
-        print(f"Corpus sentence lengths top-{n}: {sentence_lengths[-n:]}")
-        print(f"Corpus sentence lengths bot-{n}: {sentence_lengths[:n]}")
+        print(f"Sentence lengths top-{n}: {sentence_lengths[-n:]}")
+        print(f"Sentence lengths bot-{n}: {sentence_lengths[:n]}")
         print(f"Word counts top-{n}: {list(self._get_truncated_word_counts_as_dict().items())[:n]}")
         print(f"Word counts bot-{n}: {list(self._get_truncated_word_counts_as_dict().items())[-n:]}")
         print(f"Note: Word count for ['PAD'] has been set to zero for purposes of noise distribution.")
