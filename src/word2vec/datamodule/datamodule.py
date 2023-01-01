@@ -48,9 +48,10 @@ class Word2VecDataModule:
         num_neg_samples: int,
         scaling_factor: float,
         context_window_size: int,
+        batch_size: int,
         seq_len: int,
         cache_dir: str,
-        batch_size: int,
+        buffer_size: int = 100000,
     ):
         self.date_from = date_from
         self.date_to = date_to
@@ -64,6 +65,7 @@ class Word2VecDataModule:
         self.context_window_size = context_window_size
         self.seq_len = seq_len
         self.batch_size = batch_size
+        self.buffer_size = buffer_size
         self.cache_dir = cache_dir
         self.text_dataset = None
         self.val_data = None
@@ -259,7 +261,11 @@ class Word2VecDataModule:
             self.tokenizer = WordTokenizer(max_tokens=self.vocab_size, seq_len=self.seq_len)
             self.tokenizer.adapt(data=get_corpus_tensor(self.text_dataset))
             self.encoded_dataset = Word2VecEncodedDataset(self._get_encoded_dataset_tensors())
-            self.train_dataset = Word2VecSGNSDataset(self._generate_training_data()).batch(self.batch_size)
+            self.train_dataset = (
+                Word2VecSGNSDataset(self._generate_training_data())
+                .shuffle(self.buffer_size)
+                .batch(self.batch_size)
+            )
 
         if stage is None or stage == "validate":
             raise NotImplementedError("Validation set is not applicable in Word2Vec model.")
