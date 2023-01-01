@@ -1,22 +1,6 @@
 import keras
-import numpy as np
 import tensorflow as tf
 from keras import layers
-from keras.preprocessing.sequence import skipgrams
-from keras.layers.preprocessing import text_vectorization as text
-
-
-tf.random.set_seed(1)
-
-BATCH_SIZE = 1
-MAX_SEQ_LEN = 4
-VOCAB_SIZE = 8
-EMBEDDING_DIM = 5
-DENSE_DIM = 2
-HIDDEN_DIM = 3
-
-token_ids = np.array([[1, 2, 0, 0]])
-data_out = np.arange(24).reshape(BATCH_SIZE, MAX_SEQ_LEN, 2 * HIDDEN_DIM)
 
 
 class Word2Vec(keras.Model):
