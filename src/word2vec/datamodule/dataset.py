@@ -1,26 +1,28 @@
 import tensorflow as tf
+import numpy as np
 from keras.preprocessing.sequence import skipgrams
 
 
-class OKRAWord2VecTextDataset:
+class Word2VecTextDataset:
     """Sentence-level text dataset class."""
 
     def __new__(cls, data: tuple[tf.Tensor, tf.Tensor, tf.Tensor]):
         return tf.data.Dataset.from_tensor_slices(data)
 
 
-class OKRAWord2VecEncodedDataset:
+class Word2VecEncodedDataset:
     """Sentence-level integer-encoded dataset class."""
 
     def __new__(cls, data: tuple[tf.Tensor, tf.Tensor, tf.Tensor]):
         return tf.data.Dataset.from_tensor_slices(data)
 
 
-class OKRAWord2VecSGNSDataset:
+class Word2VecSGNSDataset:
     """Skip-gram negative sampling training dataset class."""
 
-    def __new__(cls, data: tuple[tuple[tf.Tensor, tf.Tensor], tf.Tensor]):
-        return tf.data.Dataset.from_tensor_slices(data)
+    def __new__(cls, data: tuple[np.ndarray, np.ndarray, np.ndarray]):
+        targets, contexts, labels = data
+        return tf.data.Dataset.from_tensor_slices(((targets, contexts), labels))
 
 
 def get_keys_tensor(dataset: tf.data.Dataset) -> tf.Tensor:
@@ -35,7 +37,7 @@ def get_corpus_tensor(dataset: tf.data.Dataset) -> tf.Tensor:
     return tf.constant([item for item in dataset.map(lambda key, x, y: x).as_numpy_iterator()])
 
 
-def get_encoded_sequences(dataset: OKRAWord2VecEncodedDataset) -> list[list[int]]:
+def get_encoded_sequences(dataset: Word2VecEncodedDataset) -> list[list[int]]:
     sequences = dataset.map(lambda key, x, y: x).as_numpy_iterator()
     return [[token_id for token_id in seq] for seq in sequences]
 

@@ -1,7 +1,7 @@
 import os
 
 
-OKRA_DB = {
+TRAIN_REVIEWS_DB = {
     "host": os.environ.get("OKRA_DB_HOST"),
     "port": os.environ.get("OKRA_DB_PORT"),
     "dbname": os.environ.get("OKRA_DB_NAME"),
@@ -10,12 +10,16 @@ OKRA_DB = {
 }
 
 VOCAB_SIZE = 30000
-EMBEDDING_DIM = 300
 SEQ_LEN = 1024
 MIN_COUNT = 5
+
 NUM_NEG_SAMPLES = 10
 SCALING_FACTOR = 0.75
 CONTEXT_WINDOW_SIZE = 5
+
+EMBEDDING_DIM = 300
+NUM_EPOCHS = 5
+BATCH_SIZE = 512
 
 DEFAULT_CACHE_DIR = os.path.join("./data")
 DEFAULT_LOG_DIR = os.path.join("./logs")

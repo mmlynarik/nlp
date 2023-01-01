@@ -13,8 +13,9 @@ from tqdm.auto import tqdm
 from dateutil.relativedelta import relativedelta
 
 from word2vec.datamodule.dataset import (
-    OKRAWord2VecTextDataset,
-    OKRAWord2VecEncodedDataset,
+    Word2VecTextDataset,
+    Word2VecEncodedDataset,
+    Word2VecSGNSDataset,
     get_corpus_tensor,
     get_keys_tensor,
     get_outputs_tensor,
@@ -34,7 +35,7 @@ log = logging.getLogger(__name__)
 log.addHandler(logging.NullHandler())
 
 
-class OKRAWord2VecDataModule:
+class Word2VecDataModule:
     def __init__(
         self,
         date_from: date,
@@ -49,7 +50,7 @@ class OKRAWord2VecDataModule:
         context_window_size: int,
         seq_len: int,
         cache_dir: str,
-        batch_size: int = 64,
+        batch_size: int,
     ):
         self.date_from = date_from
         self.date_to = date_to
@@ -159,7 +160,7 @@ class OKRAWord2VecDataModule:
         return [[token_id for token_id in seq if 0 < token_id <= last_token_id] for seq in sequences]
 
     @staticmethod
-    def get_keep_proba(token_id: int, word_counts: np.ndarray, threshold: float) -> float:
+    def _get_keep_proba(token_id: int, word_counts: np.ndarray, threshold: float) -> float:
         """See https://github.com/chrisjmccormick/word2vec_commented/blob/master/word2vec.c#L914 for detail"""
         total_word_counts = sum(word_counts)
         return (
@@ -178,7 +179,7 @@ class OKRAWord2VecDataModule:
             [
                 token_id
                 for token_id in seq
-                if self.get_keep_proba(token_id, word_counts, threshold) >= random.random()
+                if self._get_keep_proba(token_id, word_counts, threshold) >= random.random()
             ]
             for seq in sequences
         ]
@@ -253,12 +254,12 @@ class OKRAWord2VecDataModule:
             masks, dates = self._get_split_masks(df_filtered_data)
             text_dataset_vectors = self._get_text_dataset_vectors(df_filtered_data[masks[0]])
             log.info(f"Training dataset has {len(text_dataset_vectors)} obs from {dates[0]}-{dates[1]}.")
-            self.text_dataset = OKRAWord2VecTextDataset(text_dataset_vectors)
+            self.text_dataset = Word2VecTextDataset(text_dataset_vectors)
 
             self.tokenizer = WordTokenizer(max_tokens=self.vocab_size, seq_len=self.seq_len)
             self.tokenizer.adapt(data=get_corpus_tensor(self.text_dataset))
-            self.encoded_dataset = OKRAWord2VecEncodedDataset(self._get_encoded_dataset_tensors())
-            training_data = self._generate_training_data()
+            self.encoded_dataset = Word2VecEncodedDataset(self._get_encoded_dataset_tensors())
+            self.train_dataset = Word2VecSGNSDataset(self._generate_training_data()).batch(self.batch_size)
 
         if stage is None or stage == "validate":
             raise NotImplementedError("Validation set is not applicable in Word2Vec model.")
@@ -280,7 +281,7 @@ class OKRAWord2VecDataModule:
         sentence_lengths = sorted(len(s.numpy()) for s in get_corpus_tensor(self.text_dataset))
         print(f"Number of sentences: {len(self.text_dataset):,.0f}")
         print(f"Number of tokens: {sum(sentence_lengths):,.0f}")
-        print(f"Average number of tokens per sentence: {sum(sentence_lengths)/len(self.text_dataset):,.2f}")
+        print(f"Avg number of tokens per sentence: {sum(sentence_lengths)/len(self.text_dataset):,.2f}")
         print(f"Vocab size (maxtokens): {self.tokenizer._max_tokens:,.0f}")
         print(f"Vocab size (tokenizer): {self.tokenizer.vocabulary_size():,.0f}")
         print(f"Vocab size (truncated): {len(self._get_truncated_word_counts()):,.0f}")
@@ -291,3 +292,8 @@ class OKRAWord2VecDataModule:
         print(f"Word counts top-{n}: {list(self._get_truncated_word_counts_as_dict().items())[:n]}")
         print(f"Word counts bot-{n}: {list(self._get_truncated_word_counts_as_dict().items())[-n:]}")
         print(f"Note: Word count for ['PAD'] has been set to zero for purposes of noise distribution.")
+
+    def debug(self):
+        self.print_summary()
+        self.word_counts_to_csv()
+        self.text_dataset_to_csv()

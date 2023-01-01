@@ -26,8 +26,8 @@ setup(
     zip_safe=False,
     entry_points={
         "console_scripts": [
-            "load_okra_data=topicmodel.load_okra_data_json_to_db:main",
-            "train_okra_model=topicmodel.topic_model_training:main",
+            "load_train_reviews_data=word2vec.load_train_reviews_from_json_to_db:main",
+            "train_word2vec_model=word2vec.word2vec_model_training:main",
         ]
     },
 )

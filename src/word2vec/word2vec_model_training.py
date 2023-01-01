@@ -3,7 +3,7 @@ from datetime import date, datetime
 
 from dateutil.relativedelta import relativedelta
 
-from word2vec.datamodule.datamodule import OKRAWord2VecDataModule
+from word2vec.datamodule.datamodule import Word2VecDataModule
 from word2vec.config import (
     DEFAULT_LOG_DIR,
     DEFAULT_CACHE_DIR,
@@ -15,6 +15,7 @@ from word2vec.config import (
     NUM_NEG_SAMPLES,
     SCALING_FACTOR,
     CONTEXT_WINDOW_SIZE,
+    BATCH_SIZE,
 )
 
 
@@ -71,7 +72,7 @@ def train_okra_word2vec_model(
     log_dir: str,
     model_dir: str,
 ) -> None:
-    """Entrypoint function to train OKRA Word2Vec model."""
+    """Entrypoint function to train Train reviews Word2Vec model."""
 
     vocab_size = VOCAB_SIZE
     embedding_dim = EMBEDDING_DIM
@@ -80,8 +81,9 @@ def train_okra_word2vec_model(
     num_neg_samples = NUM_NEG_SAMPLES
     scaling_factor = SCALING_FACTOR
     context_window_size = CONTEXT_WINDOW_SIZE
+    batch_size = BATCH_SIZE
 
-    datamodule = OKRAWord2VecDataModule(
+    datamodule = Word2VecDataModule(
         date_from=date_from,
         date_to=date_to,
         period_val=period_val,
@@ -92,16 +94,13 @@ def train_okra_word2vec_model(
         num_neg_samples=num_neg_samples,
         scaling_factor=scaling_factor,
         context_window_size=context_window_size,
+        batch_size=batch_size,
         seq_len=seq_len,
         cache_dir=cache_dir,
     )
 
     datamodule.prepare_data()
     datamodule.setup("fit")
-
-    # datamodule.print_summary()
-    # datamodule.word_counts_to_csv()
-    # datamodule.text_dataset_to_csv()
 
 
 def main():
