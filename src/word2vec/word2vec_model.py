@@ -18,11 +18,12 @@ class Word2Vec(keras.Model):
         # self.call(layers.Input(shape=(,)))
 
     def call(self, pair):
+        """Calculate dot products of target word embedding with context words embeddings."""
         target, context = pair
         target_embedding = self.target_embedding(target)
         context_embeddings = self.context_embedding(context)
         dots = tf.einsum("be,bce->bc", target_embedding, context_embeddings)
-        return dots  # shape: (batch, num_neg_samples + 1)
+        return dots  # (batch, num_neg_samples + 1)
 
     @property
     def output_shape(self):
