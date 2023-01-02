@@ -1,9 +1,12 @@
 import argparse
 from datetime import date, datetime
 
+import tensorflow as tf
+from keras.callbacks import TensorBoard
 from dateutil.relativedelta import relativedelta
 
 from word2vec.datamodule.datamodule import Word2VecDataModule
+from word2vec.model import Word2Vec, custom_loss
 from word2vec.config import (
     DEFAULT_LOG_DIR,
     DEFAULT_CACHE_DIR,
@@ -63,7 +66,7 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def train_okra_word2vec_model(
+def train_word2vec_model(
     date_from: date,
     date_to: date,
     period_val: relativedelta,
@@ -102,27 +105,17 @@ def train_okra_word2vec_model(
     datamodule.prepare_data()
     datamodule.setup("fit")
 
-    # model = Word2Vec()
-    # max_seq_len=MAX_SEQ_LEN,
-    # embedding_dim=EMBEDDING_DIM,
-    # vocab_size=VOCAB_SIZE,
-    # dense_dim=DENSE_DIM,
-    # hidden_dim=HIDDEN_DIM,
-    # )
-    # model.compile(loss="mse", optimizer="adam")
-    # preds = model.predict(token_ids)
-    # loss = model.evaluate(token_ids, data_out, verbose=0)
+    model = Word2Vec(vocab_size=vocab_size, embedding_dim=embedding_dim, num_neg_samples=num_neg_samples)
+    model.compile(loss=custom_loss, optimizer="adam", metrics=["accuracy"])
 
-    # print("Predictions:\n", preds)
-    # print("Loss:", loss)
-
-    # model.summary()
+    tensorboard_callback = TensorBoard(log_dir="logs")
+    model.fit(datamodule.train_dataset, epochs=5, callbacks=[tensorboard_callback])
 
 
 def main():
     args = parse_args()
 
-    train_okra_word2vec_model(
+    train_word2vec_model(
         date_from=args.startdate,
         date_to=args.enddate,
         period_val=relativedelta(months=args.valperiod),

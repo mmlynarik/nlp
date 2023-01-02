@@ -229,7 +229,7 @@ class Word2VecDataModule:
                 contexts.append([positive_context_word] + negative_context_words)
                 labels.append([1] + self.num_neg_samples * [0])
 
-        return np.array(targets), np.array(contexts), np.array(labels)
+        return np.array(targets), np.array(contexts), np.array(labels, dtype=np.float32)
 
     def prepare_data(self) -> None:
         if not os.path.exists(self.cache_dir):
