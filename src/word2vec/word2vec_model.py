@@ -23,6 +23,7 @@ class Word2Vec(keras.Model):
         target_embedding = self.target_embedding(target)
         context_embeddings = self.context_embedding(context)
         dots = tf.einsum("be,bce->bc", target_embedding, context_embeddings)
+
         return dots
 
     @property
