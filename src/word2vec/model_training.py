@@ -3,6 +3,7 @@ from datetime import date, datetime
 
 import tensorflow as tf
 from keras.callbacks import TensorBoard
+from keras.losses import CategoricalCrossentropy
 from dateutil.relativedelta import relativedelta
 
 from word2vec.datamodule.datamodule import Word2VecDataModule
@@ -105,8 +106,9 @@ def train_word2vec_model(
     datamodule.prepare_data()
     datamodule.setup("fit")
 
+    loss = CategoricalCrossentropy(from_logits=True)  # custom_loss
     model = Word2Vec(vocab_size=vocab_size, embedding_dim=embedding_dim, num_neg_samples=num_neg_samples)
-    model.compile(loss=custom_loss, optimizer="adam", metrics=["accuracy"])
+    model.compile(loss=loss, optimizer="adam", metrics=["accuracy"])
 
     tensorboard_callback = TensorBoard(log_dir="logs")
     model.fit(datamodule.train_dataset, epochs=5, callbacks=[tensorboard_callback])
