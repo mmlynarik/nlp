@@ -13,12 +13,13 @@ from word2vec.config import (
     DEFAULT_CACHE_DIR,
     DEFAULT_MODEL_DIR,
     SEQ_LEN,
-    VOCAB_SIZE,
+    MAX_VOCAB_SIZE,
     EMBEDDING_DIM,
     MIN_COUNT,
     NUM_NEG_SAMPLES,
     SCALING_FACTOR,
     CONTEXT_WINDOW_SIZE,
+    NUM_EPOCHS,
     BATCH_SIZE,
 )
 
@@ -78,7 +79,7 @@ def train_word2vec_model(
 ) -> None:
     """Entrypoint function to train Train reviews Word2Vec model."""
 
-    vocab_size = VOCAB_SIZE
+    max_vocab_size = MAX_VOCAB_SIZE
     embedding_dim = EMBEDDING_DIM
     seq_len = SEQ_LEN
     min_count = MIN_COUNT
@@ -86,13 +87,14 @@ def train_word2vec_model(
     scaling_factor = SCALING_FACTOR
     context_window_size = CONTEXT_WINDOW_SIZE
     batch_size = BATCH_SIZE
+    num_epochs = NUM_EPOCHS
 
     datamodule = Word2VecDataModule(
         date_from=date_from,
         date_to=date_to,
         period_val=period_val,
         period_test=period_test,
-        vocab_size=vocab_size,
+        max_vocab_size=max_vocab_size,
         embedding_dim=embedding_dim,
         min_count=min_count,
         num_neg_samples=num_neg_samples,
@@ -106,12 +108,13 @@ def train_word2vec_model(
     datamodule.prepare_data()
     datamodule.setup("fit")
 
-    loss = CategoricalCrossentropy(from_logits=True)  # custom_loss
-    model = Word2Vec(vocab_size=vocab_size, embedding_dim=embedding_dim, num_neg_samples=num_neg_samples)
+    print(datamodule.vocab_size)
+    loss = custom_loss
+    model = Word2Vec(datamodule.vocab_size, embedding_dim, num_neg_samples)
     model.compile(loss=loss, optimizer="adam", metrics=["accuracy"])
 
     tensorboard_callback = TensorBoard(log_dir="logs")
-    model.fit(datamodule.train_dataset, epochs=5, callbacks=[tensorboard_callback])
+    model.fit(datamodule.train_dataset, epochs=num_epochs, callbacks=[tensorboard_callback])
 
 
 def main():

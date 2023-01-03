@@ -42,7 +42,7 @@ class Word2VecDataModule:
         date_to: date,
         period_val: relativedelta,
         period_test: relativedelta,
-        vocab_size: int,
+        max_vocab_size: int,
         embedding_dim: int,
         min_count: int,
         num_neg_samples: int,
@@ -57,7 +57,7 @@ class Word2VecDataModule:
         self.date_to = date_to
         self.period_val = period_val
         self.period_test = period_test
-        self.vocab_size = vocab_size
+        self.max_vocab_size = max_vocab_size
         self.embedding_dim = embedding_dim
         self.min_count = min_count
         self.num_neg_samples = num_neg_samples
@@ -84,6 +84,10 @@ class Word2VecDataModule:
     @property
     def _path_word_counts(self) -> str:
         return os.path.join(self.cache_dir, "word_counts.csv")
+
+    @property
+    def vocab_size(self):
+        return len(self._get_truncated_word_counts())
 
     def _get_filtered_data(self) -> pd.DataFrame:
         df_filtered_data = pd.read_csv(self._path_filtered_data)
@@ -258,7 +262,7 @@ class Word2VecDataModule:
             log.info(f"Training dataset has {len(text_dataset_vectors)} obs from {dates[0]}-{dates[1]}.")
             self.text_dataset = Word2VecTextDataset(text_dataset_vectors)
 
-            self.tokenizer = WordTokenizer(max_tokens=self.vocab_size, seq_len=self.seq_len)
+            self.tokenizer = WordTokenizer(max_tokens=self.max_vocab_size, seq_len=self.seq_len)
             self.tokenizer.adapt(data=get_corpus_tensor(self.text_dataset))
             self.encoded_dataset = Word2VecEncodedDataset(self._get_encoded_dataset_tensors())
             self.train_dataset = (

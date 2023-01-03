@@ -21,5 +21,5 @@ class Word2Vec(keras.Model):
         return self.layers[-1].output_shape[1:]
 
 
-def custom_loss(x_logit, y_true):
-    return tf.nn.sigmoid_cross_entropy_with_logits(logits=x_logit, labels=y_true)
+def custom_loss(y_true, y_pred):
+    return tf.nn.sigmoid_cross_entropy_with_logits(logits=y_pred, labels=y_true)
