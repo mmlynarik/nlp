@@ -89,31 +89,36 @@ def train_word2vec_model(
     batch_size = BATCH_SIZE
     num_epochs = NUM_EPOCHS
 
-    datamodule = Word2VecDataModule(
-        date_from=date_from,
-        date_to=date_to,
-        period_val=period_val,
-        period_test=period_test,
-        max_vocab_size=max_vocab_size,
-        embedding_dim=embedding_dim,
-        min_count=min_count,
-        num_neg_samples=num_neg_samples,
-        scaling_factor=scaling_factor,
-        context_window_size=context_window_size,
-        batch_size=batch_size,
-        seq_len=seq_len,
-        cache_dir=cache_dir,
-    )
+    dataset_config = {
+        "date_from": date_from,
+        "date_to": date_to,
+        "period_val": period_val,
+        "period_test": period_test,
+        "max_vocab_size": max_vocab_size,
+        "min_count": min_count,
+        "num_neg_samples": num_neg_samples,
+        "scaling_factor": scaling_factor,
+        "context_window_size": context_window_size,
+        "batch_size": batch_size,
+        "seq_len": seq_len,
+        "cache_dir": cache_dir,
+    }
+
+    datamodule = Word2VecDataModule(**dataset_config)
 
     datamodule.prepare_data()
     datamodule.setup("fit")
 
-    print(datamodule.vocab_size)
-    loss = custom_loss
-    model = Word2Vec(datamodule.vocab_size, embedding_dim, num_neg_samples)
-    model.compile(loss=loss, optimizer="adam", metrics=["accuracy"])
-
     tensorboard_callback = TensorBoard(log_dir="logs")
+
+    model_config = {
+        "vocab_size": datamodule.vocab_size,
+        "embedding_dim": embedding_dim,
+        "num_neg_samples": datamodule.num_neg_samples,
+    }
+
+    model = Word2Vec(**model_config)
+    model.compile(loss=custom_loss, optimizer="adam", metrics=["accuracy"])
     model.fit(datamodule.train_dataset, epochs=num_epochs, callbacks=[tensorboard_callback])
 
 

@@ -43,7 +43,6 @@ class Word2VecDataModule:
         period_val: relativedelta,
         period_test: relativedelta,
         max_vocab_size: int,
-        embedding_dim: int,
         min_count: int,
         num_neg_samples: int,
         scaling_factor: float,
@@ -58,7 +57,6 @@ class Word2VecDataModule:
         self.period_val = period_val
         self.period_test = period_test
         self.max_vocab_size = max_vocab_size
-        self.embedding_dim = embedding_dim
         self.min_count = min_count
         self.num_neg_samples = num_neg_samples
         self.scaling_factor = scaling_factor
