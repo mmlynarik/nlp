@@ -4,7 +4,7 @@ This repository contains code for all my personal projects related to NLP. Curre
 Skip-gram negative sampling embedding model**. In the following weeks, topic modelling project will be added.
 
 # How to run
-- Setting up postgres database in bash terminal (docker is required):
+- Setting up PostgreSQL database and load training data into database table (docker is required):
 ```bash
 make db
 ```
