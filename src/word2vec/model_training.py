@@ -1,9 +1,7 @@
 import argparse
 from datetime import date, datetime
 
-import tensorflow as tf
 from keras.callbacks import TensorBoard
-from keras.losses import CategoricalCrossentropy
 from dateutil.relativedelta import relativedelta
 
 from word2vec.datamodule.datamodule import Word2VecDataModule
@@ -13,9 +11,9 @@ from word2vec.config import (
     DEFAULT_CACHE_DIR,
     DEFAULT_MODEL_DIR,
     SEQ_LEN,
+    MIN_COUNT,
     MAX_VOCAB_SIZE,
     EMBEDDING_DIM,
-    MIN_COUNT,
     NUM_NEG_SAMPLES,
     SCALING_FACTOR,
     CONTEXT_WINDOW_SIZE,
