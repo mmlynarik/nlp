@@ -4,11 +4,10 @@ from datetime import date, datetime
 
 import tensorflow as tf
 from keras.callbacks import TensorBoard, ModelCheckpoint
-from keras.models import load_model
 from dateutil.relativedelta import relativedelta
 
 from word2vec.datamodule.datamodule import Word2VecDataModule
-from word2vec.model import custom_loss
+from word2vec.datamodule.utils import get_current_time
 from word2vec.model import Word2Vec
 from word2vec.config import (
     DEFAULT_LOG_DIR,
@@ -70,6 +69,11 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
+def get_new_version_id(model_dir: str) -> int:
+    latest_checkpoint = tf.train.latest_checkpoint(model_dir)
+    return int(latest_checkpoint[-17:-15]) + 1
+
+
 def train_word2vec_model(
     date_from: date,
     date_to: date,
@@ -113,8 +117,9 @@ def train_word2vec_model(
 
     tensorboard_callback = TensorBoard(log_dir="logs")
 
-    dt = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
-    checkpoint_path = os.path.join(model_dir, f"ckpt-{dt}")
+    checkpoint_path = os.path.join(
+        model_dir, f"word2vec-model-v{get_new_version_id(model_dir):02d}-{get_current_time()}"
+    )
     checkpoint_callback = ModelCheckpoint(
         filepath=checkpoint_path,
         save_weights_only=True,
@@ -131,11 +136,6 @@ def train_word2vec_model(
     }
 
     model = Word2Vec(**model_config)
-
-    latest_checkpoint = tf.train.latest_checkpoint(model_dir)
-    if latest_checkpoint:
-        model.load_weights(latest_checkpoint)
-
     model.compile(loss=model.loss, optimizer=model.optimizer, metrics=["accuracy"])
     model.fit(
         x=datamodule.train_dataset, epochs=num_epochs, callbacks=[tensorboard_callback, checkpoint_callback],

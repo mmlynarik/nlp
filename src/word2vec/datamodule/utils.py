@@ -1,5 +1,5 @@
 import warnings
-from datetime import date
+from datetime import date, datetime
 
 import numpy as np
 import pandas as pd
@@ -46,3 +46,7 @@ def expand_sentences_into_rows(df_data: pd.DataFrame, idcol: str, outcol: str) -
 def generate_multinomial_sample(probas: np.ndarray) -> int:
     sample = np.random.multinomial(1, probas)
     return np.where(sample == 1)[0][0]
+
+
+def get_current_time() -> str:
+    return datetime.now().strftime("%d-%m-%y-%H-%M")
