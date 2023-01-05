@@ -1,11 +1,15 @@
 import argparse
+import os
 from datetime import date, datetime
 
-from keras.callbacks import TensorBoard
+import tensorflow as tf
+from keras.callbacks import TensorBoard, ModelCheckpoint
+from keras.models import load_model
 from dateutil.relativedelta import relativedelta
 
 from word2vec.datamodule.datamodule import Word2VecDataModule
-from word2vec.model import Word2Vec, custom_loss
+from word2vec.model import custom_loss
+from word2vec.model import Word2Vec
 from word2vec.config import (
     DEFAULT_LOG_DIR,
     DEFAULT_CACHE_DIR,
@@ -75,7 +79,7 @@ def train_word2vec_model(
     log_dir: str,
     model_dir: str,
 ) -> None:
-    """Entrypoint function to train Train reviews Word2Vec model."""
+    """Entrypoint function to train Word2Vec model on train reviews."""
 
     max_vocab_size = MAX_VOCAB_SIZE
     embedding_dim = EMBEDDING_DIM
@@ -109,6 +113,17 @@ def train_word2vec_model(
 
     tensorboard_callback = TensorBoard(log_dir="logs")
 
+    dt = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
+    checkpoint_path = os.path.join(model_dir, f"ckpt-{dt}")
+    checkpoint_callback = ModelCheckpoint(
+        filepath=checkpoint_path,
+        save_weights_only=True,
+        monitor="accuracy",
+        mode="max",
+        save_best_only=True,
+        save_freq="epoch",
+    )
+
     model_config = {
         "vocab_size": datamodule.vocab_size,
         "embedding_dim": embedding_dim,
@@ -116,8 +131,15 @@ def train_word2vec_model(
     }
 
     model = Word2Vec(**model_config)
-    model.compile(loss=custom_loss, optimizer="adam", metrics=["accuracy"])
-    model.fit(datamodule.train_dataset, epochs=num_epochs, callbacks=[tensorboard_callback])
+
+    latest_checkpoint = tf.train.latest_checkpoint(model_dir)
+    if latest_checkpoint:
+        model.load_weights(latest_checkpoint)
+
+    model.compile(loss=model.loss, optimizer=model.optimizer, metrics=["accuracy"])
+    model.fit(
+        x=datamodule.train_dataset, epochs=num_epochs, callbacks=[tensorboard_callback, checkpoint_callback],
+    )
 
 
 def main():

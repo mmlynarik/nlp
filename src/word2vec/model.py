@@ -1,6 +1,6 @@
 import keras
 import tensorflow as tf
-from keras import layers
+from keras import layers, optimizers
 
 
 class Word2Vec(keras.Model):
@@ -8,6 +8,8 @@ class Word2Vec(keras.Model):
         super().__init__()
         self.target_embedding = layers.Embedding(vocab_size, embedding_dim, input_length=1, name="embeddings")
         self.context_embedding = layers.Embedding(vocab_size, embedding_dim, input_length=num_neg_samples + 1)
+        self.optimizer = optimizers.Adam(0.001)
+        self.loss = custom_loss
 
     def call(self, pair):
         target, context = pair
@@ -22,4 +24,4 @@ class Word2Vec(keras.Model):
 
 
 def custom_loss(y_true, y_pred):
-    return tf.nn.sigmoid_cross_entropy_with_logits(logits=y_pred, labels=y_true)
+    return tf.nn.sigmoid_cross_entropy_with_logits(logits=y_pred, labels=y_true, name="custom_loss")
