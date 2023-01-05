@@ -7,7 +7,6 @@ from keras.callbacks import TensorBoard, ModelCheckpoint
 from dateutil.relativedelta import relativedelta
 
 from word2vec.datamodule.datamodule import Word2VecDataModule
-from word2vec.datamodule.utils import get_current_time
 from word2vec.model import Word2Vec
 from word2vec.config import (
     DEFAULT_LOG_DIR,
@@ -72,6 +71,10 @@ def parse_args() -> argparse.Namespace:
 def get_new_version_id(model_dir: str) -> int:
     latest_checkpoint = tf.train.latest_checkpoint(model_dir)
     return int(latest_checkpoint[-17:-15]) + 1
+
+
+def get_current_time() -> str:
+    return datetime.now().strftime("%d-%m-%y-%H-%M")
 
 
 def train_word2vec_model(
