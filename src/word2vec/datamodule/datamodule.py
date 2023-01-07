@@ -160,8 +160,8 @@ class Word2VecDataModule:
         return scaled_word_counts / sum(scaled_word_counts)
 
     def _clean_sequences(self, sequences: list[list[int]], last_token_id: int) -> list[list[int]]:
-        """Remove from sequences token_ids for padding and low-frequency words."""
-        return [[token_id for token_id in seq if 0 < token_id <= last_token_id] for seq in sequences]
+        """Remove from sequences token_ids for special [PAD] and [UNK] tokens and low-frequency words."""
+        return [[token_id for token_id in seq if 1 < token_id <= last_token_id] for seq in sequences]
 
     @staticmethod
     def _get_keep_proba(token_id: int, word_counts: np.ndarray, threshold: float) -> float:
@@ -270,6 +270,7 @@ class Word2VecDataModule:
                 .prefetch(1)
             )
             log.info(f"Train dataset size: {len(self.train_dataset) * self.batch_size}")
+            self.print_summary()
 
         if stage is None or stage == "validate":
             raise NotImplementedError("Validation set is not applicable in Word2Vec model.")
