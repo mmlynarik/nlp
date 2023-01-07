@@ -9,7 +9,7 @@ TRAIN_REVIEWS_DB = {
     "password": os.environ.get("OKRA_DB_PASSWORD"),
 }
 
-MAX_VOCAB_SIZE = 30000
+MAX_VOCAB_SIZE = 1718
 SEQ_LEN = 1024
 MIN_COUNT = 5
 
