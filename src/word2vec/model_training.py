@@ -70,6 +70,8 @@ def parse_args() -> argparse.Namespace:
 
 def get_new_version_id(model_dir: str) -> int:
     latest_checkpoint = tf.train.latest_checkpoint(model_dir)
+    if latest_checkpoint is None:
+        return 1
     return int(latest_checkpoint[-17:-15]) + 1
 
 
