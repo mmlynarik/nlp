@@ -8,8 +8,8 @@ class Word2VecModel(keras.Model):
         super().__init__()
         self.target_embedding = layers.Embedding(vocab_size, embedding_dim, input_length=1, name="embeddings")
         self.context_embedding = layers.Embedding(vocab_size, embedding_dim, input_length=num_neg_samples + 1)
-        self.optimizer = optimizers.Adam(0.001)
-        self.loss = custom_loss
+        self.optimizer = get_adam_optimizer()
+        self.loss = tf.nn.sigmoid_cross_entropy_with_logits
 
     def call(self, pair):
         target, context = pair
@@ -23,5 +23,16 @@ class Word2VecModel(keras.Model):
         return self.layers[-1].output_shape[1:]
 
 
-def custom_loss(y_true, y_pred):
-    return tf.nn.sigmoid_cross_entropy_with_logits(logits=y_pred, labels=y_true, name="custom_loss")
+def get_adam_optimizer():
+    """
+    The use of tf.Variable instead of floats in optimizer constructor is needed in order to fix the model weights loading issue where the optimizer parameters would not be loaded and warning would be issued.
+    """
+    adam = optimizers.Adam(
+        learning_rate=tf.Variable(0.001),
+        beta_1=tf.Variable(0.9),
+        beta_2=tf.Variable(0.999),
+        epsilon=tf.Variable(1e-7),
+    )
+    adam.decay = tf.Variable(0.0)
+    adam.iterations
+    return adam
