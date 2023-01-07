@@ -7,7 +7,7 @@ from keras.callbacks import TensorBoard, ModelCheckpoint
 from dateutil.relativedelta import relativedelta
 
 from word2vec.datamodule.datamodule import Word2VecDataModule
-from word2vec.model import Word2Vec
+from word2vec.model import Word2VecModel
 from word2vec.config import (
     DEFAULT_LOG_DIR,
     DEFAULT_CACHE_DIR,
@@ -120,9 +120,8 @@ def train_word2vec_model(
 
     tensorboard_callback = TensorBoard(log_dir="logs")
 
-    checkpoint_path = os.path.join(
-        model_dir, f"word2vec-model-v{get_new_version_id(model_dir):02d}-{get_current_time()}"
-    )
+    checkpoint_file = f"word2vec-model-v{get_new_version_id(model_dir):02d}-{get_current_time()}"
+    checkpoint_path = os.path.join(model_dir, checkpoint_file)
     checkpoint_callback = ModelCheckpoint(
         filepath=checkpoint_path,
         save_weights_only=True,
@@ -138,7 +137,7 @@ def train_word2vec_model(
         "num_neg_samples": datamodule.num_neg_samples,
     }
 
-    model = Word2Vec(**model_config)
+    model = Word2VecModel(**model_config)
     model.compile(loss=model.loss, optimizer=model.optimizer, metrics=["accuracy"])
     model.fit(
         x=datamodule.train_dataset, epochs=num_epochs, callbacks=[tensorboard_callback, checkpoint_callback],
