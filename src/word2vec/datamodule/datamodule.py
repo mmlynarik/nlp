@@ -302,7 +302,9 @@ class Word2VecDataModule:
         print(f"Sentence lengths bot-{n}: {sentence_lengths[:n]}")
         print(f"Word counts top-{n}: {list(self._get_truncated_word_counts_as_dict().items())[:n]}")
         print(f"Word counts bot-{n}: {list(self._get_truncated_word_counts_as_dict().items())[-n:]}")
-        print(f"Note: Word count for ['PAD'] has been set to zero for purposes of noise distribution.")
+        print(
+            f"Note: Word counts for ['PAD'] and ['UNK'] tokens have been set to zero for purposes of noise distribution generation."
+        )
 
     def debug(self):
         self.print_summary()
