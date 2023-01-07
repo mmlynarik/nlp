@@ -1,6 +1,3 @@
-import re
-import string
-
 import tensorflow as tf
 from keras.layers.preprocessing import text_vectorization as text
 

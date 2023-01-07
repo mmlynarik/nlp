@@ -84,7 +84,7 @@ class Word2VecDataModule:
         return os.path.join(self.cache_dir, "word_counts.csv")
 
     @property
-    def vocab_size(self):
+    def truncated_vocab_size(self):
         return len(self._get_truncated_word_counts())
 
     def _get_filtered_data(self) -> pd.DataFrame:

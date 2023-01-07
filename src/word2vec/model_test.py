@@ -38,24 +38,25 @@ def get_normalized_embeddings():
     return normalize_embeddings(get_word2vec_embeddings())
 
 
-# def get_topn_similar(word: str, topN: int = 10):
-#     word_id = vocab[word]
-#     if word_id == 0:
-#         print("Out of vocabulary word")
-#         return
+def get_topn_similar_words(word: str, topN: int = 10):
+    vocab = {}
+    word_idx = vocab.get(word)
+    if word_idx is None:
+        print("Out of vocabulary word")
+        return
 
-#     norm_embeddings = get_normalized_embeddings()
+    norm_embeddings = get_normalized_embeddings()
 
-#     word_vec = norm_embeddings[word_id]
-#     word_vec = np.reshape(word_vec, (len(word_vec), 1))
-#     dists = np.matmul(norm_embeddings, word_vec).flatten()
-#     topN_ids = np.argsort(-dists)[1 : topN + 1]
+    embedding = norm_embeddings[word_idx]
+    embedding = np.reshape(embedding, (len(embedding), 1))
+    distances = np.matmul(norm_embeddings, embedding).flatten()
+    topN_ids = np.argsort(-distances)[1 : topN + 1]
 
-#     topN_dict = {}
-#     for sim_word_id in topN_ids:
-#         sim_word = vocab.lookup_token(sim_word_id)
-#         topN_dict[sim_word] = dists[sim_word_id]
-#     return topN_dict
+    topN_dict = {}
+    for sim_word_id in topN_ids:
+        sim_word = vocab.lookup_token(sim_word_id)
+        topN_dict[sim_word] = distances[sim_word_id]
+    return topN_dict
 
 
 if __name__ == "__main__":

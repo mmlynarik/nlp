@@ -134,7 +134,7 @@ def train_word2vec_model(
     )
 
     model_config = {
-        "vocab_size": datamodule.vocab_size,
+        "vocab_size": datamodule.truncated_vocab_size,
         "embedding_dim": embedding_dim,
         "num_neg_samples": datamodule.num_neg_samples,
     }
