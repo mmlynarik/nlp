@@ -28,6 +28,7 @@ setup(
         "console_scripts": [
             "load_train_reviews_data=word2vec.load_train_reviews_from_json_to_db:main",
             "train_word2vec_model=word2vec.model_training:main",
+            "test_word_similarity=word2vec.word_similarity:main",
         ]
     },
 )

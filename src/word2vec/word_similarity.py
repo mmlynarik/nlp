@@ -71,5 +71,10 @@ def get_topn_similar_words(word: str, n: int = 10):
         print(f"{word}: {similarity:.3f}")
 
 
+def main():
+    word = input("Enter word for which similar words should be found: ")
+    get_topn_similar_words(word)
+
+
 if __name__ == "__main__":
-    get_topn_similar_words("has")
+    main()

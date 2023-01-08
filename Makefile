@@ -46,6 +46,9 @@ dbd:
 train:
 	train_word2vec_model -s 2011-01-01 -e 2019-12-31 -v 0 -t 0
 
+wordsim:
+	test_word_similarity
+
 precommit:
 	pre-commit run --all-files
 
