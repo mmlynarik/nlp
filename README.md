@@ -2,7 +2,7 @@
 
 This repository contains python code for my personal projects related to NLP. 
 Current projects:
-- **Word2Vec Skip-gram negative sampling embedding model**
+- Word2Vec word embeddings model using skip-gram negative sampling
 - Topic modelling (coming soon)
 
 ## Set up repository
