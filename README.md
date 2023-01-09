@@ -1,7 +1,6 @@
 # NLP projects repository
 
-This repository contains python code for my personal projects related to NLP. 
-Current projects:
+This repository contains python code for my personal projects related to NLP.
 - Word2Vec word embeddings model using skip-gram negative sampling
 - Topic modelling (coming soon)
 
