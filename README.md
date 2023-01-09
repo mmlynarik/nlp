@@ -1,7 +1,9 @@
 # NLP projects repository
 
-This repository contains python code for my personal projects related to NLP. Currently finished project is **Word2Vec
-Skip-gram negative sampling embedding model**. In the following weeks, topic modelling project will be added.
+This repository contains python code for my personal projects related to NLP. 
+Current projects:
+- **Word2Vec Skip-gram negative sampling embedding model**
+- Topic modelling (coming soon)
 
 ## Set up repository
 - Install poetry package and dependency manager:
