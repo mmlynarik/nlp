@@ -25,6 +25,7 @@ tensorflow = "2.9"
 click = "8.0.2"
 python-dateutil = "^2.8.2"
 src = {path = "src", develop = true}
+top2vec = "^1.0.27"
 
 [tool.poetry.group.dev.dependencies]
 pycodestyle = "2.9.1"
