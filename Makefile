@@ -12,14 +12,6 @@ git:
 poetry:
 	curl -sSL https://install.python-poetry.org | python3.9 -
 
-repo:
-	mkdir python
-	cd python; \
-
-	mv Makefile setup.cfg pyproject.toml poetry.lock python/UssAi/
-	cd python/okra; \
-	code .
-
 venv:
 	poetry config virtualenvs.in-project true
 	python3.9 -m venv .venv; \
@@ -78,15 +70,6 @@ django:
 	cd src/djangoproject/; \
 	python manage.py runserver
 
-dramatiqr:
-	cd src/djangoproject/; \
-	sudo service redis-server start; \
-	python manage.py rundramatiq
-
-dramatiq:
-	cd src/djangoproject/; \
-	python manage.py rundramatiq
-
 test:
 	python -m unittest discover -s tests -t .
 
@@ -106,17 +89,11 @@ static:
 	cd src/djangoproject/; \
 	python manage.py collectstatic
 
-loadprod:
+loaddata:
 	cd djangoproject/; \
 	python manage.py migrate; \
 	python manage.py flush --no-input; \
-	python manage.py loaddata db_backup_prod.json
-
-loadtest:
-	cd djangoproject/; \
-	python manage.py migrate; \
-	python manage.py flush --no-input; \
-	python manage.py loaddata db_backup_test.json
+	python manage.py loaddata db_backup.json
 
 flush:
 	cd djangoproject/; \
