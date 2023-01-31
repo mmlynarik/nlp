@@ -7,16 +7,16 @@ import psycopg2
 import regex
 
 from word2vec.config import TRAIN_REVIEWS_DB
-from word2vec.datamodule.queries import QUERY_OKRA_DATA_PG
+from word2vec.datamodule.queries import QUERY_REVIEWS_DATA_PG
 from word2vec.datamodule.regexp import mask_non_words, rectify_typos
 
 
-def read_okra_data_from_db(date_from: date, date_to: date) -> pd.DataFrame:
+def read_reviews_data_from_db(date_from: date, date_to: date) -> pd.DataFrame:
     with warnings.catch_warnings():  # ignore pandas issue #45660
         warnings.simplefilter("ignore", UserWarning)
         with psycopg2.connect(**TRAIN_REVIEWS_DB) as conn:
-            df_okra = pd.read_sql(QUERY_OKRA_DATA_PG.format(date_from=date_from, date_to=date_to), conn)
-    return df_okra
+            df_data = pd.read_sql(QUERY_REVIEWS_DATA_PG.format(date_from=date_from, date_to=date_to), conn)
+    return df_data
 
 
 def preprocess_text_document(string: str) -> str:

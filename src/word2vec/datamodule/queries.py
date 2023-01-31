@@ -1,4 +1,4 @@
-QUERY_OKRA_DATA_PG = """
+QUERY_REVIEWS_DATA_PG = """
     SELECT
         id,
         date,
