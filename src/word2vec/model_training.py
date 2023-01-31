@@ -26,7 +26,7 @@ from word2vec.config import (
 
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Train OKRA Word2Vec model")
+    parser = argparse.ArgumentParser(description="Train Word2Vec model")
 
     parser.add_argument(
         "-s",

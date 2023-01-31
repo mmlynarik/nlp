@@ -10,6 +10,7 @@ import pandas as pd
 import numpy as np
 import tensorflow as tf
 from tqdm.auto import tqdm
+from top2vec import Top2Vec
 from dateutil.relativedelta import relativedelta
 
 from word2vec.datamodule.dataset import (
@@ -24,7 +25,7 @@ from word2vec.datamodule.dataset import (
 )
 from word2vec.datamodule.tokenizers import WordTokenizer
 from word2vec.datamodule.utils import (
-    read_okra_data_from_db,
+    read_reviews_data_from_db,
     preprocess_text_document,
     split_text_to_sentences,
     expand_sentences_into_rows,
@@ -243,7 +244,7 @@ class Word2VecDataModule:
             return
 
         # Read and preprocess data
-        df_data = read_okra_data_from_db(date_from=self.date_from, date_to=self.date_to)
+        df_data = read_reviews_data_from_db(date_from=self.date_from, date_to=self.date_to)
         df_data["text"] = df_data["text"].apply(lambda x: preprocess_text_document(x))
         df_data["sentences"] = df_data["text"].apply(lambda x: split_text_to_sentences(x))
         df_data = df_data.pipe(expand_sentences_into_rows, outcol="sentence", idcol="id")
@@ -283,6 +284,12 @@ class Word2VecDataModule:
         pd.DataFrame(data, index=["count"]).T.reset_index().to_csv(
             self._path_word_counts, index=False, encoding="UTF-8-SIG"
         )
+
+    def get_top2_vec_input(self) -> list[str]:
+        list_of_dicts = text_dataset_to_list_of_dicts(self.text_dataset)
+        docs = [item["review"] for item in list_of_dicts]
+        model = Top2Vec(documents=docs, min_count=5, workers=4)
+        return model
 
     def text_dataset_to_csv(self) -> None:
         data = text_dataset_to_list_of_dicts(self.text_dataset)
