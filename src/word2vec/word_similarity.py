@@ -21,10 +21,9 @@ def get_latest_word2vec_model() -> Word2VecModel:
     return model
 
 
-def get_latest_word2vec_idx2word() -> list[str]:
+def get_word2vec_idx2word() -> list[str]:
     latest_checkpoint = tf.train.latest_checkpoint(DEFAULT_MODEL_DIR)
-    checkpoint_path = os.path.join(DEFAULT_MODEL_DIR, latest_checkpoint)
-    with open(checkpoint_path + ".idx2word.pkl", "rb") as f:
+    with open(latest_checkpoint + ".idx2word.pkl", "rb") as f:
         idx2word = pickle.load(f)
     return idx2word
 
@@ -45,7 +44,7 @@ def get_normalized_embeddings() -> np.ndarray:
 
 
 def get_topn_similar_words(word: str, n: int = 10):
-    idx2word = get_latest_word2vec_idx2word()
+    idx2word = get_word2vec_idx2word()
     try:
         word_idx = idx2word.index(word)
     except ValueError:
