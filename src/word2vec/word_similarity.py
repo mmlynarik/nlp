@@ -1,4 +1,3 @@
-import os
 import pickle
 
 import numpy as np
@@ -28,19 +27,16 @@ def get_word2vec_idx2word() -> list[str]:
     return idx2word
 
 
-def get_word2vec_embeddings() -> np.ndarray:
+def load_word2vec_embeddings() -> np.ndarray:
     model = get_latest_word2vec_model()
     return model.get_layer("embeddings").get_weights()[0]
 
 
-def normalize_embeddings(embeddings: np.ndarray) -> np.ndarray:
+def get_normalized_embeddings() -> np.ndarray:
+    embeddings = load_word2vec_embeddings()
     norms = (embeddings ** 2).sum(axis=1) ** (1 / 2)
     norms = np.reshape(norms, (len(norms), 1))
     return embeddings / norms
-
-
-def get_normalized_embeddings() -> np.ndarray:
-    return normalize_embeddings(get_word2vec_embeddings())
 
 
 def get_topn_similar_words(word: str, n: int = 10):
@@ -61,9 +57,9 @@ def get_topn_similar_words(word: str, n: int = 10):
 
     distances = norm_embeddings.dot(embedding)
 
-    topn_ids = np.argsort(distances)[-n:]
+    topn_ids = np.argsort(distances)[-n - 1 : -1]
     topn_dict = {}
-    for word_id in topn_ids:
+    for word_id in np.flip(topn_ids):
         word = idx2word[word_id]
         topn_dict[word] = distances[word_id]
     for word, similarity in topn_dict.items():
