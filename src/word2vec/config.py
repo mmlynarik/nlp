@@ -1,12 +1,12 @@
 import os
 
 
-TRAIN_REVIEWS_DB = {
-    "host": os.environ.get("OKRA_DB_HOST"),
-    "port": os.environ.get("OKRA_DB_PORT"),
-    "dbname": os.environ.get("OKRA_DB_NAME"),
-    "user": os.environ.get("OKRA_DB_USER"),
-    "password": os.environ.get("OKRA_DB_PASSWORD"),
+APP_DB = {
+    "host": os.environ.get("POSTGRES_HOST"),
+    "port": os.environ.get("POSTGRES_PORT"),
+    "dbname": os.environ.get("POSTGRES_NAME"),
+    "user": os.environ.get("POSTGRES_USER"),
+    "password": os.environ.get("POSTGRES_PASSWORD"),
 }
 
 MAX_VOCAB_SIZE = 1718

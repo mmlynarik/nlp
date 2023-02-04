@@ -6,7 +6,7 @@ import pandas as pd
 import psycopg2
 import regex
 
-from word2vec.config import TRAIN_REVIEWS_DB
+from word2vec.config import APP_DB
 from word2vec.datamodule.queries import QUERY_REVIEWS_DATA_PG
 from word2vec.datamodule.regexp import mask_non_words, rectify_typos
 
@@ -14,7 +14,7 @@ from word2vec.datamodule.regexp import mask_non_words, rectify_typos
 def read_reviews_data_from_db(date_from: date, date_to: date) -> pd.DataFrame:
     with warnings.catch_warnings():  # ignore pandas issue #45660
         warnings.simplefilter("ignore", UserWarning)
-        with psycopg2.connect(**TRAIN_REVIEWS_DB) as conn:
+        with psycopg2.connect(**APP_DB) as conn:
             df_data = pd.read_sql(QUERY_REVIEWS_DATA_PG.format(date_from=date_from, date_to=date_to), conn)
     return df_data
 
