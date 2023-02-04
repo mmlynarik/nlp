@@ -9,7 +9,7 @@ wordsim:
 	test_word_similarity
 
 
-##### DEV SCRIPTS #####
+##### DEV & DOCKER #####
 test:
 	python -m unittest discover -s tests -t .
 
@@ -21,7 +21,7 @@ image:
 	docker build --build-arg HTTP_PROXY=$HTTP_PROXY --build-arg HTTPS_PROXY=$HTTP_PROXY -t nlp:latest .
 
 bash:
-	docker run -it nlp bash
+	docker run -it --name nlp nlp bash
 
 ##### DATABASE ####
 db:
