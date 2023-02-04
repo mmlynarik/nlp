@@ -1,0 +1,6 @@
+.venv
+.env
+logs
+tests
+setup.cfg
+.pre-commit-config.yaml
