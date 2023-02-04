@@ -25,6 +25,6 @@ RUN python3.9 -m venv .venv && \
     poetry run pip install -U pip setuptools wheel && \
     poetry install --without dev
 
-COPY ./src src/
+COPY . .
 
-ENTRYPOINT ["/bin/bash", "-c", "poetry shell && python manage.py migrate && gunicorn -w 4 -b 0.0.0.0:8080 nlp.wsgi:application"]
+# ENTRYPOINT ["/bin/bash", "-c", "poetry shell && python manage.py migrate && gunicorn -w 4 -b 0.0.0.0:8080 nlp.wsgi:application"]
