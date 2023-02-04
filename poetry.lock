@@ -3672,7 +3672,7 @@ files = [
 name = "src"
 version = "0.0.1"
 description = "My NLP home projects"
-category = "main"
+category = "dev"
 optional = false
 python-versions = "*"
 files = []
@@ -4665,4 +4665,4 @@ testing = ["flake8 (<5)", "func-timeout", "jaraco.functools", "jaraco.itertools"
 [metadata]
 lock-version = "2.0"
 python-versions = "3.9.5"
-content-hash = "2fff5fa707a1893c2297cdca0a19df3416cfc129b221b44ffd7b4fd989dafee7"
+content-hash = "c156f89e29b0009252a162fed8f4972d9c59b77f6a787f6a622fde8968c7de64"
