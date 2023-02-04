@@ -3,8 +3,6 @@ services:
   web:
     build:
       context: .
-    environment:
-      - REDIS_URL=redis://redis:6379
     entrypoint: ["/bin/bash", "-c", "poetry run python manage.py migrate && gunicorn -w 4 -b 0.0.0.0:8080 nlp.wsgi:application"]
     logging:
       driver: "json-file"
@@ -13,5 +11,15 @@ services:
     ports:
       - "8080:8080"
     restart: always
+    depends_on:
+      - postgres
   postgres:
-    image: postgres
+    image: postgres:15
+    environment:
+      - POSTGRES_HOST=localhost
+      - POSTGRES_PORT=5432
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_NAME=postgres
+    ports:
+      - "5432:5432"
