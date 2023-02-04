@@ -1,0 +1,15 @@
+version: "3.8"
+services:
+  web:
+    build:
+      context: .
+    environment:
+      - REDIS_URL=redis://redis:6379
+    entrypoint: ["/bin/bash", "-c", "poetry run python manage.py migrate && gunicorn -w 4 -b 0.0.0.0:8080 nlp.wsgi:application"]
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+    ports:
+      - "8080:8080"
+    restart: always
