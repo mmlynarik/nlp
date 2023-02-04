@@ -17,6 +17,12 @@ precommit:
 	pre-commit run --all-files
 
 
+image:
+	docker build --build-arg HTTP_PROXY=$HTTP_PROXY --build-arg HTTPS_PROXY=$HTTP_PROXY -t nlp:latest .
+
+bash:
+	docker run -it nlp bash
+
 ##### DATABASE ####
 db:
 	docker run -d --name postgres -e POSTGRES_USER=$${OKRA_DB_USER} -e POSTGRES_PASSWORD=$${OKRA_DB_PASSWORD} -p 5432:5432 -v ${HOME}/data:/var/lib/postgresql/data postgres:15
