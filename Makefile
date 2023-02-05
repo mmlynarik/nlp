@@ -18,7 +18,7 @@ precommit:
 
 
 image:
-	docker build --build-arg HTTP_PROXY=$HTTP_PROXY --build-arg HTTPS_PROXY=$HTTP_PROXY -t nlp:latest .
+	docker build --build-arg HTTP_PROXY=$$HTTP_PROXY --build-arg HTTPS_PROXY=$$HTTP_PROXY -t nlp:latest .
 
 bash:
 	docker run -it --name nlp nlp bash
