@@ -95,7 +95,6 @@ DATABASES = {
     }
 }
 
-
 MAX_CONN_AGE = 600
 
 
