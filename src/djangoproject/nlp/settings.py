@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 from pathlib import Path
 import os
 
+import dj_database_url
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -22,11 +24,17 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = "w5cios$9om1g=vi$colcz2_a@+edkbr0$l1*4-a0u^q0_=5wkc"
 
+if "SECRET_KEY" in os.environ:
+    SECRET_KEY = os.environ["SECRET_KEY"]
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
 
-ALLOWED_HOSTS = []
+IS_HEROKU = "DYNO" in os.environ
+
+
+ALLOWED_HOSTS = ["*"]
+
+if not IS_HEROKU:
+    DEBUG = True
 
 
 # Application definition
@@ -75,6 +83,7 @@ WSGI_APPLICATION = "nlp.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
+
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
@@ -85,6 +94,18 @@ DATABASES = {
         "PORT": os.environ.get("POSTGRES_PORT"),
     }
 }
+
+
+MAX_CONN_AGE = 600
+
+
+if "DATABASE_URL" in os.environ:
+    # Configure Django for DATABASE_URL environment variable.
+    DATABASES["default"] = dj_database_url.config(conn_max_age=MAX_CONN_AGE, ssl_require=True)
+
+    if "CI" in os.environ:
+        DATABASES["default"]["TEST"] = DATABASES["default"]
+
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
