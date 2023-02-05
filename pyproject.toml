@@ -22,7 +22,6 @@ transformers = "4.19.2"
 django = "4.1.2"
 gunicorn = "20.1"
 psycopg2 = "2.9"
-tensorflow = "2.9"
 click = "8.0.2"
 python-dateutil = "^2.8.2"
 top2vec = "^1.0.27"
@@ -30,6 +29,7 @@ datasets = "^2.9.0"
 
 [tool.poetry.group.dev.dependencies]
 src = {path = "src", develop = true}
+tensorflow = "2.9"
 pycodestyle = "2.9.1"
 black = "19.10b0"
 pre-commit = "2.20.0"
