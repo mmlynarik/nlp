@@ -23,7 +23,7 @@ image:
 bash:
 	docker run -it --name nlp nlp bash
 
-##### DATABASE ####
+##### DEV DATABASE MNGM ####
 db:
 	docker run -d --name postgres -e POSTGRES_USER=$${POSTGRES_USER} -e POSTGRES_PASSWORD=$${POSTGRES_PASSWORD} -p 5431:5432 -v ${HOME}/data:/var/lib/postgresql/data postgres:15
 	sleep 2
