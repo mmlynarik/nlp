@@ -1,5 +1,10 @@
 .venv
 .env
+.git
+.gitignore
+.dockerignore
+Dockerfile
+docker-compose.yml
 logs
 tests
 setup.cfg
