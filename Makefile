@@ -9,7 +9,7 @@ wordsim:
 	test_word_similarity
 
 
-##### DEV & DOCKER #####
+##### DEV & DEPLOY #####
 test:
 	python -m unittest discover -s tests -t .
 
@@ -25,7 +25,7 @@ bash:
 
 ##### DATABASE ####
 db:
-	docker run -d --name postgres -e POSTGRES_USER=$${POSTGRES_USER} -e POSTGRES_PASSWORD=$${POSTGRES_PASSWORD} -p 5432:5432 -v ${HOME}/data:/var/lib/postgresql/data postgres:15
+	docker run -d --name postgres -e POSTGRES_USER=$${POSTGRES_USER} -e POSTGRES_PASSWORD=$${POSTGRES_PASSWORD} -p 5431:5432 -v ${HOME}/data:/var/lib/postgresql/data postgres:15
 	sleep 2
 	cd src/djangoproject/; \
 	python manage.py migrate
