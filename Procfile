@@ -1,1 +1,1 @@
-web: gunicorn nlp.wsgi
+web: gunicorn --chdir src/djangoproject nlp.wsgi
