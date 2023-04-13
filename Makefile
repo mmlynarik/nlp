@@ -53,7 +53,6 @@ venv:
 	poetry config virtualenvs.in-project true
 	python3.9 -m venv .venv; \
 	cp .env_tmpl .env; \
-	nano .env; \
 	echo "set -a && . ./.env && set +a" >> .venv/bin/activate; \
 	. .venv/bin/activate; \
 	pip install -U pip setuptools wheel; \
