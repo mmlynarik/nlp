@@ -120,7 +120,6 @@ def train_word2vec_model(
 
     datamodule.prepare_data()
     datamodule.setup("fit")
-    datamodule.get_top2vec_input()
     tensorboard_callback = TensorBoard(log_dir="logs")
 
     checkpoint_file = f"word2vec-model-v{get_new_version_id(model_dir):02d}-{get_current_time()}"
