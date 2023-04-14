@@ -72,7 +72,7 @@ class Word2VecDataModule:
     @property
     def _path_filtered_data(self) -> str:
         return os.path.join(
-            self.cache_dir, f"filtered_data_from_{self.date_from:%Y%m%d}_to_{self.date_to:%Y%m%d}.csv",
+            self.cache_dir, f"word2vec_filtered_data_{self.date_from:%Y%m%d}_{self.date_to:%Y%m%d}.csv",
         )
 
     @property
