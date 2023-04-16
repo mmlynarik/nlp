@@ -18,7 +18,7 @@ setup(
     name="src",
     version="0.0.1",
     package_data={},
-    packages=["word2vec", "djangoproject",],
+    packages=["word2vec", "topicmodel", "djangoproject",],
     description="My NLP home projects",
     long_description=long_description,
     long_description_content_type="text/markdown",
