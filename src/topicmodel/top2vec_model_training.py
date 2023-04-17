@@ -22,5 +22,14 @@ dataset_config = {
 datamodule = TopicModelDataModule(**dataset_config)
 datamodule.prepare_data()
 datamodule.setup("fit")
+top2vec_docs = datamodule.get_top2vec_input()
 
-top2vec = Top2Vec(datamodule.get_top2vec_input())
+# UMAP needs random state pinning, HDBSCAN and pretrained embedding models (SBERT/USE) are deterministic.
+top2vec = Top2Vec(
+    documents=top2vec_docs,
+    min_count=5,
+    embedding_model="distiluse-base-multilingual-cased",
+    umap_args={"random_state": 1000},
+)
+topic_words, topic_scores, topic_nums = top2vec.get_topics()
+print(topic_words, topic_scores, topic_nums)

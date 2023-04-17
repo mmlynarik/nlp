@@ -1,3 +1,4 @@
+import torch
 from transformers import BertTokenizer
 from tokenizers import Tokenizer, Encoding
 from tokenizers.models import WordPiece
@@ -7,3 +8,5 @@ tokenizer: BertTokenizer = BertTokenizer.from_pretrained("bert-base-uncased", pr
 text = "ahoj tu som, a ty?"
 tokenizer.tokenize(text)
 tokenizer.encode(text)
+
+print(torch.cuda.is_available())
