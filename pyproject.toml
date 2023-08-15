@@ -10,7 +10,6 @@ keywords = ["nlp"]
 
 [tool.poetry.dependencies]
 python = ">=3.9.5,<3.11"
-pandas = "1.2"
 gensim = "4.1.2"
 top2vec = "^1.0.27"
 pyLDAvis = "3.3.1"
@@ -18,11 +17,7 @@ django = "4.1.2"
 gunicorn = "20.1"
 psycopg2-binary = "2.9"
 dj-database-url = "^1.2.0"
-torch = "^2.0.0"
 sentence-transformers = "^2.2.2"
-
-[tool.poetry.group.dev.dependencies]
-src = {path = "src", develop = true}
 tensorflow = "2.9"
 jupyterlab = "3.2.4"
 ipython = "7.29.0"
@@ -40,6 +35,9 @@ rouge = "1.0.1"
 lightning = "2.0.3"
 transformers = "4.30.2"
 sentencepiece = "0.1.99"
+
+[tool.poetry.group.dev.dependencies]
+src = {path = "src", develop = true}
 pycodestyle = "2.9.1"
 black = "19.10b0"
 pre-commit = "2.20.0"
