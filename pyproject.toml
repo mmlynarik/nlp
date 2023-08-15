@@ -27,10 +27,17 @@ jupyterlab = "3.2.4"
 ipython = "7.29.0"
 ipywidgets = "7.6.5"
 python-dotenv = "0.19.2"
-transformers = "4.19.2"
 python-dateutil = "^2.8.2"
 click = "8.0.2"
 datasets = "^2.9.0"
+torch = "2.0.0"
+pandas = "2.0.1"
+huggingface-download-cli = "1.0.3"
+tokenizers = "0.13.3"
+rouge = "1.0.1"
+lightning = "2.0.3"
+transformers = "4.30.2"
+sentencepiece = "0.1.99"
 pycodestyle = "2.9.1"
 black = "19.10b0"
 pre-commit = "2.20.0"
@@ -41,8 +48,3 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.black]
 line-length = 110
-
-[mypy]
-ignore_missing_imports = true
-check_untyped_defs = true
-strict_equality = false
