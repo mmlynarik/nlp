@@ -10,7 +10,6 @@ import pandas as pd
 import numpy as np
 import tensorflow as tf
 from tqdm.auto import tqdm
-from top2vec import Top2Vec
 from dateutil.relativedelta import relativedelta
 
 from word2vec.datamodule.dataset import (
@@ -73,7 +72,7 @@ class Word2VecDataModule:
     @property
     def _path_filtered_data(self) -> str:
         return os.path.join(
-            self.cache_dir, f"filtered_data_from_{self.date_from:%Y%m%d}_to_{self.date_to:%Y%m%d}.csv",
+            self.cache_dir, f"word2vec_filtered_data_{self.date_from:%Y%m%d}_{self.date_to:%Y%m%d}.csv",
         )
 
     @property
@@ -284,12 +283,6 @@ class Word2VecDataModule:
         pd.DataFrame(data, index=["count"]).T.reset_index().to_csv(
             self._path_word_counts, index=False, encoding="UTF-8-SIG"
         )
-
-    def get_top2_vec_input(self) -> list[str]:
-        list_of_dicts = text_dataset_to_list_of_dicts(self.text_dataset)
-        docs = [item["review"] for item in list_of_dicts]
-        model = Top2Vec(documents=docs, min_count=5, workers=4)
-        return model
 
     def text_dataset_to_csv(self) -> None:
         data = text_dataset_to_list_of_dicts(self.text_dataset)

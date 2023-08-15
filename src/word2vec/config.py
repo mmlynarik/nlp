@@ -9,7 +9,7 @@ APP_DB = {
     "password": os.environ.get("POSTGRES_PASSWORD"),
 }
 
-MAX_VOCAB_SIZE = 1718
+MAX_VOCAB_SIZE = 30000
 SEQ_LEN = 1024
 MIN_COUNT = 5
 

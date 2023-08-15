@@ -4,7 +4,7 @@ import numpy as np
 import tensorflow as tf
 
 from word2vec.config import DEFAULT_MODEL_DIR, EMBEDDING_DIM, MAX_VOCAB_SIZE, NUM_NEG_SAMPLES
-from word2vec.model import Word2VecModel
+from word2vec.word2vec_model import Word2VecModel
 
 
 def configure_embedding_weights_shape(model: Word2VecModel) -> Word2VecModel:

@@ -25,7 +25,7 @@ bash:
 
 ##### DEV DATABASE MNGM ####
 db:
-	docker run -d --name postgres -e POSTGRES_USER=$${POSTGRES_USER} -e POSTGRES_PASSWORD=$${POSTGRES_PASSWORD} -p 5431:5432 -v ${HOME}/data:/var/lib/postgresql/data postgres:15
+	docker run -d --name postgres -e POSTGRES_USER=$${POSTGRES_USER} -e POSTGRES_PASSWORD=$${POSTGRES_PASSWORD} -p 5432:5432 -v ${HOME}/data:/var/lib/postgresql/data postgres:15
 	sleep 2
 	cd src/djangoproject/; \
 	python manage.py migrate
@@ -53,7 +53,6 @@ venv:
 	poetry config virtualenvs.in-project true
 	python3.9 -m venv .venv; \
 	cp .env_tmpl .env; \
-	nano .env; \
 	echo "set -a && . ./.env && set +a" >> .venv/bin/activate; \
 	. .venv/bin/activate; \
 	pip install -U pip setuptools wheel; \
@@ -96,7 +95,7 @@ static:
 	python manage.py collectstatic
 
 loaddata:
-	cd djangoproject/; \
+	cd src/djangoproject/; \
 	python manage.py migrate; \
 	python manage.py flush --no-input; \
 	python manage.py loaddata db_backup.json

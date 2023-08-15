@@ -8,7 +8,7 @@ from keras.callbacks import TensorBoard, ModelCheckpoint
 from dateutil.relativedelta import relativedelta
 
 from word2vec.datamodule.datamodule import Word2VecDataModule
-from word2vec.model import Word2VecModel
+from word2vec.word2vec_model import Word2VecModel
 from word2vec.config import (
     DEFAULT_LOG_DIR,
     DEFAULT_CACHE_DIR,
@@ -120,7 +120,6 @@ def train_word2vec_model(
 
     datamodule.prepare_data()
     datamodule.setup("fit")
-    # datamodule.get_top2_vec_input()
     tensorboard_callback = TensorBoard(log_dir="logs")
 
     checkpoint_file = f"word2vec-model-v{get_new_version_id(model_dir):02d}-{get_current_time()}"
