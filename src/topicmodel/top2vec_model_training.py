@@ -24,12 +24,18 @@ datamodule.prepare_data()
 datamodule.setup("fit")
 top2vec_docs = datamodule.get_top2vec_input()
 
+sbert_models = [
+    "distiluse-base-multilingual-cased",
+    "all-MiniLM-L6-v2",
+    "paraphrase-multilingual-MiniLM-L12-v2",
+]
+
 # UMAP needs random state pinning, HDBSCAN and pretrained embedding models (SBERT/USE) are deterministic.
 top2vec = Top2Vec(
     documents=top2vec_docs,
     min_count=5,
-    embedding_model="distiluse-base-multilingual-cased",
-    umap_args={"random_state": 1000},
+    # embedding_model=sbert_models[2],
+    umap_args={"random_state": 100},
 )
-topic_words, topic_scores, topic_nums = top2vec.get_topics()
-print(topic_words, topic_scores, topic_nums)
+topic_words, scores, nums = top2vec.get_topics()
+print(topic_words, scores, nums)
