@@ -12,17 +12,20 @@ RUN apt-get update --fix-missing && \
     libpq-dev && \
     apt-get clean
 
-ENV PATH="/root/.local/bin:$PATH"
 ENV PYTHONUNBUFFERED=true
+ENV SKLEARN_ALLOW_DEPRECATED_SKLEARN_PACKAGE_INSTALL=True
+ENV HTTP_PROXY=http://mly1323:HarryPotter001@proxy.intranet.usske.sk:4128
+ENV HTTPS_PROXY=http://mly1323:HarryPotter001@proxy.intranet.usske.sk:4128
 
-COPY ./pyproject.toml ./poetry.lock ./
+COPY pyproject.toml poetry.lock ./
 
-RUN curl -sSL https://install.python-poetry.org | python3.9 -
+RUN pip install --proxy ${HTTP_PROXY} -U pip setuptools wheel
+RUN pip install --proxy ${HTTP_PROXY} poetry
 
 RUN python3.9 -m venv .venv && \
-    mkdir src/ && touch src/setup.py && \
     poetry config virtualenvs.in-project true && \
-    poetry run pip install -U pip setuptools wheel && \
-    poetry install --without dev
+    poetry install --without dev --no-root
 
 COPY . .
+
+RUN poetry install --without dev
