@@ -17,9 +17,9 @@ ENV SKLEARN_ALLOW_DEPRECATED_SKLEARN_PACKAGE_INSTALL=True
 
 COPY pyproject.toml poetry.lock ./
 
-# In case proxy is neede, set ENV HTTPS_PROXY= and HTTPS_PROXY=
-RUN pip install --proxy ${HTTP_PROXY} -U pip setuptools wheel
-RUN pip install --proxy ${HTTP_PROXY} poetry
+# In case proxy is needed, set ENV HTTPS_PROXY= and HTTP_PROXY= and add --proxy ${HTTP_PROXY} to pip cmds
+RUN pip install -U pip setuptools wheel
+RUN pip install poetry
 
 RUN python3.9 -m venv .venv && \
     poetry config virtualenvs.in-project true && \
