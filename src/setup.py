@@ -18,7 +18,7 @@ setup(
     name="src",
     version="0.0.1",
     package_data={},
-    packages=["word2vec", "topicmodel", "djangoproject",],
+    packages=["word2vec", "topicmodel", "djangoproject", "summarization"],
     description="My NLP home projects",
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -29,6 +29,8 @@ setup(
             "load_train_reviews_data=word2vec.load_train_reviews_from_json_to_db:main",
             "train_word2vec_model=word2vec.word2vec_model_training:main",
             "test_word_similarity=word2vec.word_similarity:main",
+            "train_tokenizer=summarization.entrypoints.train_tokenizer:main",
+            "train_model=summarization.entrypoints.train_model:main",
         ]
     },
 )

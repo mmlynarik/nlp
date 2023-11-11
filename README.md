@@ -2,7 +2,7 @@
 
 This repository contains python code for projects related to NLP.
 - **Word2Vec embeddings** using skip-gram negative sampling
-- **Topic modeling** (coming soon)
+- **Text summarization seq2seq model** (work in progress)
 
 ## Set up repository
 - Install poetry package and dependency manager:
