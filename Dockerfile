@@ -12,12 +12,11 @@ RUN apt-get update --fix-missing && \
     libpq-dev && \
     apt-get clean
 
-ENV PYTHONUNBUFFERED=true
+ENV PYTHONUNBUFFERED=True
 ENV SKLEARN_ALLOW_DEPRECATED_SKLEARN_PACKAGE_INSTALL=True
 
 COPY pyproject.toml poetry.lock ./
 
-# In case proxy is needed, set ENV HTTPS_PROXY= and HTTP_PROXY= and add --proxy ${HTTP_PROXY} to pip cmds
 RUN pip install -U pip setuptools wheel
 RUN pip install poetry
 
