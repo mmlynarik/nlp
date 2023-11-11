@@ -11,6 +11,7 @@ packages = [
     { include = "djangoproject", from = "src" },
     { include = "topicmodel", from = "src" },
     { include = "word2vec", from = "src" },
+    { include = "summarization", from = "src" },
 ]
 
 [tool.poetry.dependencies]
@@ -26,7 +27,7 @@ torch = "^2.0.0"
 sentence-transformers = "^2.2.2"
 
 [tool.poetry.group.dev.dependencies]
-src = {path = "src", develop = true}
+# src = {path = "src", develop = true}
 pycodestyle = "2.9.1"
 black = "19.10b0"
 pre-commit = "2.20.0"
@@ -54,6 +55,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
 load_train = 'word2vec.load_train_reviews_from_json_to_db:main'
+test_word_similarity = "word2vec.word_similarity:main"
 
 [tool.black]
 line-length = 110
