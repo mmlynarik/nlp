@@ -1,3 +1,7 @@
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
 [tool.poetry]
 name = "NLP"
 version = "0.1.0"
@@ -23,14 +27,8 @@ django = "4.1.2"
 gunicorn = "20.1"
 psycopg2-binary = "2.9"
 dj-database-url = "^1.2.0"
-torch = "^2.0.0"
+torch = "2.0.0"
 sentence-transformers = "^2.2.2"
-
-[tool.poetry.group.dev.dependencies]
-# src = {path = "src", develop = true}
-pycodestyle = "2.9.1"
-black = "19.10b0"
-pre-commit = "2.20.0"
 tensorflow = "2.9"
 jupyterlab = "3.2.4"
 ipython = "7.29.0"
@@ -40,7 +38,6 @@ python-dateutil = "2.8.2"
 tqdm = "4.62.3"
 click = "8.0.2"
 datasets = "2.9.0"
-torch = "2.0.0"
 pandas = "2.0.1"
 huggingface-download-cli = "1.0.3"
 tokenizers = "0.13.3"
@@ -49,13 +46,18 @@ lightning = "2.0.3"
 transformers = "4.30.2"
 sentencepiece = "0.1.99"
 
-[build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
+[tool.poetry.group.dev.dependencies]
+ruff = "0.1.5"
+mypy = "1.5.1"
+black = "23.9.1"
+pre-commit = "2.20.0"
 
 [tool.poetry.scripts]
-load_train = 'word2vec.load_train_reviews_from_json_to_db:main'
 test_word_similarity = "word2vec.word_similarity:main"
+load_train_reviews_data = "word2vec.load_train_reviews_from_json_to_db:main"
+train_word2vec_model = "word2vec.word2vec_model_training:main"
+train_tokenizer = "summarization.entrypoints.train_tokenizer:main"
+train_model = "summarization.entrypoints.train_model:main"
 
 [tool.black]
 line-length = 110
@@ -64,3 +66,6 @@ line-length = 110
 ignore_missing_imports = true
 check_untyped_defs = true
 strict_equality = false
+
+[tool.ruff]
+line-length = 110
