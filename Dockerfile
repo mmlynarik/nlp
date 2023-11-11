@@ -14,11 +14,10 @@ RUN apt-get update --fix-missing && \
 
 ENV PYTHONUNBUFFERED=true
 ENV SKLEARN_ALLOW_DEPRECATED_SKLEARN_PACKAGE_INSTALL=True
-ENV HTTP_PROXY=http://mly1323:HarryPotter001@proxy.intranet.usske.sk:4128
-ENV HTTPS_PROXY=http://mly1323:HarryPotter001@proxy.intranet.usske.sk:4128
 
 COPY pyproject.toml poetry.lock ./
 
+# In case proxy is neede, set ENV HTTPS_PROXY= and HTTPS_PROXY=
 RUN pip install --proxy ${HTTP_PROXY} -U pip setuptools wheel
 RUN pip install --proxy ${HTTP_PROXY} poetry
 
