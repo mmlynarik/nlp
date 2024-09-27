@@ -34,6 +34,8 @@ dependencies = [
     "tensorboard==2.15.2",
     "numpy==1.26.4",
     "pip==24.2",
+    "transformers==4.45",
+    "ipykernel==6.29",
 ]
 
 [project.scripts]
