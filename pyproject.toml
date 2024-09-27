@@ -1,71 +1,145 @@
-[build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
-
-[tool.poetry]
+[project]
 name = "NLP"
 version = "0.1.0"
 description = "My NLP home projects"
-license = "Proprietary"
-authors = ["Miroslav Mlynarik <miroslav.mlynarik@gmail.com>"]
 readme = "README.md"
-repository = "https://github.com/mmlynarik/nlp"
-keywords = ["nlp"]
-packages = [
-    { include = "djangoproject", from = "src" },
-    { include = "topicmodel", from = "src" },
-    { include = "word2vec", from = "src" },
-    { include = "summarization", from = "src" },
+requires-python = ">=3.11.8"
+dependencies = [
+    "attrs==23.2.0",
+    "oracledb==2.4.1",
+    "dash==2.9.3",
+    "datasets==2.19.1",
+    "django-debug-toolbar==4.4.2",
+    "django-plotly-dash==2.3.1",
+    "django==4.2.13",
+    "gunicorn==22.0.0",
+    "jsonargparse[signatures]==4.27.7",
+    "torch",
+    "lightning==2.2.5",
+    "matplotlib==3.8.4",
+    "mssql-django==1.5",
+    "openpyxl==3.1.5",
+    "pandas==2.2.2",
+    "periodictable==1.6.1",
+    "pymssql==2.2.11",
+    "pyodbc==5.1.0",
+    "pytz==2024.1",
+    "pyyaml==6.0.1",
+    "requests==2.32.2",
+    "scipy==1.13.1",
+    "sqlalchemy==2.0.30",
+    "tqdm==4.66.4",
+    "websockets==12.0",
+    "whitenoise==6.6.0",
+    "tensorboard==2.15.2",
+    "numpy==1.26.4",
+    "pip==24.2",
 ]
 
-[tool.poetry.dependencies]
-python = ">=3.9.5,<3.11"
-gensim = "4.1.2"
-top2vec = "1.0.27"
-pyLDAvis = "3.3.1"
-django = "4.1.2"
-gunicorn = "20.1"
-psycopg2-binary = "2.9"
-dj-database-url = "^1.2.0"
-torch = "2.0.0"
-sentence-transformers = "^2.2.2"
-tensorflow = "2.9"
-jupyterlab = "3.2.4"
-ipython = "7.29.0"
-ipywidgets = "7.6.5"
-python-dotenv = "0.19.2"
-python-dateutil = "2.8.2"
-tqdm = "4.62.3"
-click = "8.0.2"
-datasets = "2.9.0"
-pandas = "2.0.1"
-huggingface-download-cli = "1.0.3"
-tokenizers = "0.13.3"
-rouge = "1.0.1"
-lightning = "2.0.3"
-transformers = "4.30.2"
-sentencepiece = "0.1.99"
+[project.scripts]
 
-[tool.poetry.group.dev.dependencies]
-ruff = "0.1.5"
-mypy = "1.5.1"
-black = "23.9.1"
-pre-commit = "2.20.0"
+[tool.uv]
+package = true
+dev-dependencies = [
+    "black==24.4.2",
+    "isort>=5.13.2",
+    "mypy==1.10.0",
+    "pre-commit==3.6.0",
+    "ruff==0.4.6",
+    "types-pytz==2024.1.0.20240417",
+    "types-pyyaml==6.0.12.12",
+    "types-requests==2.32.0.20240523",
+]
 
-[tool.poetry.scripts]
-test_word_similarity = "word2vec.word_similarity:main"
-load_train_reviews_data = "word2vec.load_train_reviews_from_json_to_db:main"
-train_word2vec_model = "word2vec.word2vec_model_training:main"
-train_tokenizer = "summarization.entrypoints.train_tokenizer:main"
-train_model = "summarization.entrypoints.train_model:main"
+[tool.uv.sources]
+torch = { path = "/opt/torch/torch-2.4.0+cpu-cp311-cp311-linux_x86_64.whl" }
+
+[tool.ruff]
+line-length = 110
+exclude = ["experimental/", ".venv"]
 
 [tool.black]
 line-length = 110
+
+[tool.isort]
+profile = "black"
+line_length = 110
 
 [tool.mypy]
 ignore_missing_imports = true
 check_untyped_defs = true
 strict_equality = false
+exclude = ["^notebooks/", "migrations/"]
 
-[tool.ruff]
-line-length = 110
+
+# [build-system]
+# requires = ["poetry-core>=1.0.0"]
+# build-backend = "poetry.core.masonry.api"
+
+# [tool.poetry]
+# name = "NLP"
+# version = "0.1.0"
+# description = "My NLP home projects"
+# license = "Proprietary"
+# authors = ["Miroslav Mlynarik <miroslav.mlynarik@gmail.com>"]
+# readme = "README.md"
+# repository = "https://github.com/mmlynarik/nlp"
+# keywords = ["nlp"]
+# packages = [
+#     { include = "djangoproject", from = "src" },
+#     { include = "topicmodel", from = "src" },
+#     { include = "word2vec", from = "src" },
+#     { include = "summarization", from = "src" },
+# ]
+
+# [tool.poetry.dependencies]
+# python = ">=3.9.5,<3.11"
+# gensim = "4.1.2"
+# top2vec = "1.0.27"
+# pyLDAvis = "3.3.1"
+# django = "4.1.2"
+# gunicorn = "20.1"
+# psycopg2-binary = "2.9"
+# dj-database-url = "^1.2.0"
+# torch = "2.0.0"
+# sentence-transformers = "^2.2.2"
+# tensorflow = "2.9"
+# jupyterlab = "3.2.4"
+# ipython = "7.29.0"
+# ipywidgets = "7.6.5"
+# python-dotenv = "0.19.2"
+# python-dateutil = "2.8.2"
+# tqdm = "4.62.3"
+# click = "8.0.2"
+# datasets = "2.9.0"
+# pandas = "2.0.1"
+# huggingface-download-cli = "1.0.3"
+# tokenizers = "0.13.3"
+# rouge = "1.0.1"
+# lightning = "2.0.3"
+# transformers = "4.30.2"
+# sentencepiece = "0.1.99"
+
+# [tool.poetry.group.dev.dependencies]
+# ruff = "0.1.5"
+# mypy = "1.5.1"
+# black = "23.9.1"
+# pre-commit = "2.20.0"
+
+# [tool.poetry.scripts]
+# test_word_similarity = "word2vec.word_similarity:main"
+# load_train_reviews_data = "word2vec.load_train_reviews_from_json_to_db:main"
+# train_word2vec_model = "word2vec.word2vec_model_training:main"
+# train_tokenizer = "summarization.entrypoints.train_tokenizer:main"
+# train_model = "summarization.entrypoints.train_model:main"
+
+# [tool.black]
+# line-length = 110
+
+# [tool.mypy]
+# ignore_missing_imports = true
+# check_untyped_defs = true
+# strict_equality = false
+
+# [tool.ruff]
+# line-length = 110
