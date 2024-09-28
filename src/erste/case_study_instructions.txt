@@ -1,0 +1,19 @@
+Instructions 
+
+This task is designed to give us an idea of your data science capabilities. 
+
+Some general things to consider before starting:
+*)We are more interested in how you think rather than a specific value as a result. 
+*)Please describe why you did or didn't do specific things, e.g. What did you do with the data? Why? How did you go about understanding the data and what did you build based on this understanding? 
+*)In our work we often don't know what the path to a solution looks like. Therefore, you will not get specific tasks of what you have to do with the data but instead you have complete freedom. But, be prepared to defend your choices!
+
+Some technical things to consider:
+*)Please work in a python notebook (e.g. jupyter notebooks). We will be wanting to see some of your code to understand what you did. You are free to create additional slides, markdowns, pdfs, comments or anything you want to help aid your presentation. 
+*)This is a small dataset. You will not need GPUs or anything to complete it. A standard notebook will suffice.
+
+Some details about the challenge:
+*)The zip file contains multiple csv files: features, text_features and targets. 
+*)There are two parts to this challenge: a compulsory one and an optional one. 
+*)As mentioned above, we are not assigning you any specific tasks. Instead, we give you complete freedom and would like to see how you work with the data; what methods you use or don't use and why; how you manipulate and extract information from it; what conclusions you can draw from your results. 
+	1. The compulsory task can be categorized as "classical" data science. Please use the files features and targets. 
+	2. The optional task is text-based. Use text_features in combination with the data in the compulsory section to gain further insights and see the effect of this data on your results. 
