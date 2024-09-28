@@ -36,6 +36,7 @@ dependencies = [
     "pip==24.2",
     "transformers==4.45",
     "ipykernel==6.29",
+    "nbformat==4.2.0",
 ]
 
 [project.scripts]
