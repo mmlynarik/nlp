@@ -38,9 +38,16 @@ dependencies = [
     "ipykernel==6.29",
     "scikit-learn==1.5.2",
     "nbformat==5.10.3",
+    "catboost==1.2.7",
 ]
 
 [project.scripts]
+test_word_similarity = "word2vec.word_similarity:main"
+load_train_reviews_data = "word2vec.load_train_reviews_from_json_to_db:main"
+train_word2vec_model = "word2vec.word2vec_model_training:main"
+train_tokenizer = "summarization.entrypoints.train_tokenizer:main"
+train_model = "summarization.entrypoints.train_model:main"
+
 
 [tool.uv]
 package = true
