@@ -82,6 +82,3 @@ ignore_missing_imports = true
 check_untyped_defs = true
 strict_equality = false
 exclude = ["^notebooks/", "migrations/"]
-
-# [tool.ruff]
-# line-length = 110
